@@ -6,6 +6,7 @@ import java.util.Queue;
 import com.yad.harpseal.constant.Layer;
 import com.yad.harpseal.util.Communicable;
 import com.yad.harpseal.util.Controllable;
+import com.yad.harpseal.util.HarpLog;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -61,18 +62,19 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 		this.paint=new Paint();
 		this.mediaPlayer=new MediaPlayer();
 		this.soundPool=new SoundPool(7,AudioManager.STREAM_MUSIC,0);
+		HarpLog.info("GameController created");
 	}
 	
 	@Override
 	public final void start() {
 		super.start();
-		System.out.println("GameThread started");
+		HarpLog.info("Game thread started");
 	}
 
 	@Override
 	public final void run() {
 		super.run();
-		System.out.println("GameThread is running");
+		HarpLog.info("Game thread is running");
 		
 		// temp variable (Frequently changed)
 		Canvas c=null;
@@ -137,7 +139,7 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 					e.printStackTrace();
 
 					// time loss need to be processed but.. I think this exception cannot be called
-					System.out.println("Interrupted Exception caught! It makes time loss!");
+					HarpLog.danger("Interrupted Exception caught! It makes time loss!");
 
 				}
 				
@@ -145,7 +147,7 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 			////
 			
 			// wait
-			System.out.println("GameThread is waiting being restarted");
+			HarpLog.info("Game thread is waiting being restarted");
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
@@ -155,26 +157,26 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 		}
 
 		// restore data
-		System.out.println("GameThread ended");
+		HarpLog.info("Game thread ended");
 		restoreData();
 		mediaPlayer.release();
 		soundPool.release();
 	}
 	
 	public final void pause() {
-		System.out.println("GameThread paused");
+		HarpLog.info("Game thread paused");
 		isPaused=true;
 		mediaPlayer.pause();
 	}
 	
 	public final void restart() {
-		System.out.println("GameThread restarted");
+		HarpLog.info("Game thread restarted");
 		isPaused=false;		
 		mediaPlayer.start();
 	}
 
 	public final void end() {
-		System.out.println("GameThread will be ended");
+		HarpLog.info("Game thread will be ended");
 		isEnded=true;
 	}
 	
@@ -184,6 +186,7 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 	
 	@Override
 	public int send(String msg) {
+		HarpLog.debug("Controller received message : "+msg);
 		
 		String[] msgs=msg.split("/");
 		if(msgs[0].equals("playSound")) {
@@ -221,6 +224,7 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 				return 0;
 		}
 		
+		HarpLog.error("Controller couldn't understand message : "+msg);
 		return 0;
 		
 	}
@@ -229,7 +233,10 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 	public Object get(String name) {
 		if(name.equals("screenX")) return SCREEN_X;
 		else if(name.equals("screenY")) return SCREEN_Y;
-		else return null;
+		else {
+			HarpLog.error("Controller received invalid name of get() : "+name);
+			return null;
+		}
 	}
 	
 }

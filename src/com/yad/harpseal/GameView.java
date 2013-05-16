@@ -1,5 +1,7 @@
 package com.yad.harpseal;
 
+import com.yad.harpseal.util.HarpLog;
+
 import android.content.Context;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -8,7 +10,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	
 	public GameView(Context context) {
 		super(context);
-		System.out.println("View class created");
+		HarpLog.info("GameView created");
 		
 		// holder hash will not be changed until this class(SurfaceView) is newly created.
 		SurfaceHolder holder=getHolder();
@@ -18,17 +20,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 			int height) {
-		System.out.println("Surface changed");
+		HarpLog.info("Surface changed");
 	}
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		System.out.println("Surface created");
+		HarpLog.info("Surface created");
 	}
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		System.out.println("Surface destroyed");
+		HarpLog.info("Surface destroyed");
 	}
 
 }

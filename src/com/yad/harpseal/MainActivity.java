@@ -1,6 +1,7 @@
 package com.yad.harpseal;
 
 import com.yad.harpseal.controller.GameController;
+import com.yad.harpseal.util.HarpLog;
 
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -15,7 +16,7 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		System.out.println("MainActivity created");
+		HarpLog.info("MainActivity created");
 		
 		// init
 		view=new GameView(getApplicationContext());
@@ -29,7 +30,7 @@ public class MainActivity extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		System.out.println("MainActivity resumed");
+		HarpLog.info("MainActivity resumed");
 		thread.restart();
 	}
 	
@@ -38,12 +39,12 @@ public class MainActivity extends Activity {
 		super.onPause();
 		
 		// game pause
-		System.out.println("MainActivity paused");				
+		HarpLog.info("MainActivity paused");				
 		thread.pause();
 		
 		// game end
 		if(this.isFinishing()) {
-			System.out.println("MainActivity destroyed");
+			HarpLog.info("MainActivity destroyed");
 			thread.end();
 		}
 	}
@@ -51,7 +52,7 @@ public class MainActivity extends Activity {
 	// touch event
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		System.out.println("MainActivity received TouchEvent");
+		HarpLog.debug("TouchEvent : type-"+event.getAction()+" x-"+event.getX()+" y-"+event.getY());
 		thread.pushEvent(event.getAction(),event.getX(),event.getY());
 		return true;
 	}
