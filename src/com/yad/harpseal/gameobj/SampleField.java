@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import com.yad.harpseal.R;
 import com.yad.harpseal.constant.Layer;
 import com.yad.harpseal.util.Communicable;
+import com.yad.harpseal.util.HarpEvent;
 
 public class SampleField extends GameObject {
 
@@ -21,7 +22,7 @@ public class SampleField extends GameObject {
 	}
 
 	@Override
-	public void receiveMotion(int type, float x, float y) {
+	public void receiveMotion(HarpEvent ev,int layer) {
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import java.util.Queue;
 import com.yad.harpseal.constant.Layer;
 import com.yad.harpseal.util.Communicable;
 import com.yad.harpseal.util.Controllable;
+import com.yad.harpseal.util.HarpEvent;
 import com.yad.harpseal.util.HarpLog;
 
 import android.content.Context;
@@ -30,16 +31,7 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 	private final static int PERIOD_BASE=15;
 	
 	// motion event
-	private Queue<MotionEventCopy> event;
-	private final class MotionEventCopy {
-		public int type;
-		public float x,y;
-		public MotionEventCopy(int type, float x, float y) {
-			this.type=type;
-			this.x=x;
-			this.y=y;
-		}
-	}
+	private Queue<HarpEvent> event;
 
 	// drawing
 	private SurfaceHolder holder;
@@ -57,7 +49,7 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 		this.isPaused=false;
 		this.isEnded=false;
 		this.period=PERIOD_BASE;
-		this.event=new LinkedList<MotionEventCopy>();
+		this.event=new LinkedList<HarpEvent>();
 		this.holder=holder;
 		this.paint=new Paint();
 		this.mediaPlayer=new MediaPlayer();
@@ -81,7 +73,7 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 		long fms,lms;
 		float scaleRate;
 		float transHeight;
-		MotionEventCopy ev=null;
+		HarpEvent ev=null;
 		
 		while(!isEnded) {
 			
@@ -107,10 +99,10 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 						// touch event
 						while(event.peek()!=null) {
 							ev=event.poll();
-							ev.x/=scaleRate;
-							ev.y/=scaleRate;
-							ev.y-=transHeight;
-							receiveMotion(ev.type,ev.x,ev.y);
+							ev.regulate(scaleRate, transHeight);
+							for(int i=Layer.LAYER_SIZE-1;(i>0 && ev.isProcessed()==false);i--) {
+								receiveMotion(ev,i);
+							}
 						}
 
 						// drawing
@@ -181,7 +173,7 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 	}
 	
 	public final void pushEvent(int type,float x,float y) {
-		event.add(new MotionEventCopy(type,x,y));
+		event.add(new HarpEvent(type,x,y));
 	}
 	
 	@Override

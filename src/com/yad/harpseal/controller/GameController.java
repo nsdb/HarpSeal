@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.view.SurfaceHolder;
 
 import com.yad.harpseal.gameobj.*;
+import com.yad.harpseal.util.HarpEvent;
 
 public class GameController extends GameControllerBase {
 
@@ -35,12 +36,15 @@ public class GameController extends GameControllerBase {
 	}
 
 	@Override
-	public void receiveMotion(int type, float x, float y) {
+	public void receiveMotion(HarpEvent ev,int layer) {
 		
-		field.receiveMotion(type, x, y);
-		for(int i=0;i<boxes.size();i++)
-			boxes.get(i).receiveMotion(type, x, y);
-		ui.receiveMotion(type, x, y);
+		field.receiveMotion(ev,layer);
+		if(ev.isProcessed()) return;
+		for(int i=0;i<boxes.size();i++) {
+			boxes.get(i).receiveMotion(ev,layer);
+			if(ev.isProcessed()) return;
+		}
+		ui.receiveMotion(ev,layer);
 		
 	}
 
@@ -49,8 +53,7 @@ public class GameController extends GameControllerBase {
 		
 		field.drawScreen(c, p, layer);
 		p.reset();
-		for(int i=0;i<boxes.size();i++)
-		{
+		for(int i=0;i<boxes.size();i++) {
 			boxes.get(i).drawScreen(c, p, layer);
 			p.reset();
 		}

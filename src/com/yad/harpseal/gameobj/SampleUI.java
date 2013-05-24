@@ -8,6 +8,7 @@ import android.view.MotionEvent;
 import com.yad.harpseal.R;
 import com.yad.harpseal.constant.Layer;
 import com.yad.harpseal.util.Communicable;
+import com.yad.harpseal.util.HarpEvent;
 
 public class SampleUI extends GameObject {
 
@@ -26,11 +27,12 @@ public class SampleUI extends GameObject {
 	}
 
 	@Override
-	public void receiveMotion(int type, float x, float y) {
-		if(type==MotionEvent.ACTION_DOWN) {
-			touchX=x;
-			touchY=y;
+	public void receiveMotion(HarpEvent ev,int layer) {
+		if(ev.getType()==MotionEvent.ACTION_DOWN) {
+			touchX=ev.getX();
+			touchY=ev.getY();
 			con.send("playChunk/"+chunkNum);
+			ev.process();
 		}		
 	}
 

@@ -6,7 +6,7 @@ import android.graphics.Paint;
 public interface Controllable {
 
 	public void playGame(int ms);
-	public void receiveMotion(int type,float x,float y);
+	public void receiveMotion(HarpEvent ev,int layer);
 	public void drawScreen(Canvas c,Paint p,int layer);
 	public void restoreData();
 }

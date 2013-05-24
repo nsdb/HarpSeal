@@ -16,6 +16,7 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		HarpLog.init("");
 		HarpLog.info("MainActivity created");
 		
 		// init
