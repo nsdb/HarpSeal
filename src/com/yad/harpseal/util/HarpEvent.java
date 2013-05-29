@@ -14,8 +14,9 @@ public class HarpEvent {
 		this.processed=false;
 	}
 	
+	// Regulate event to app screen
 	public void regulate(float scaleRate,float transHeight) {
-		if(regulated==true) {
+		if(regulated) {
 			HarpLog.error("Event is already regulated");
 		}
 		x/=scaleRate;
@@ -24,19 +25,33 @@ public class HarpEvent {
 		regulated=true;
 	}
 	
-	
-	public int getType() { return type; }
-	public float getX() { return x; }
-	public float getY() { return y; }
-	
-	
+	// carve that it is processed
 	public void process() {
-		if(processed==true) {
+		if(processed) {
 			HarpLog.danger("Event is already processed");
 		}
 		processed=true;
 	}
 	
+	// getter
+	public int getType() {
+		if(processed) {
+			HarpLog.danger("Event is already processed");
+		}
+		return type;
+	}
+	public float getX() {
+		if(processed) {
+			HarpLog.danger("Event is already processed");
+		}
+		return x;
+	}
+	public float getY() {
+		if(processed) {
+			HarpLog.danger("Event is already processed");
+		}
+		return y;
+	}	
 	public boolean isProcessed() { return processed; }
 
 }
