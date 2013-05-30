@@ -28,9 +28,9 @@ public class SampleField extends GameObject {
 	@Override
 	public void drawScreen(Canvas c, Paint p, int layer) {
 		if(layer != Layer.LAYER_FIELD) return;
-
 		int screenX=(Integer)con.get("screenX");
 		int screenY=(Integer)con.get("screenY");
+		p.reset();
 
 		// outline
 		p.setColor(0xFFFFFFFF);

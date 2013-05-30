@@ -53,8 +53,7 @@ public class MainActivity extends Activity {
 	// touch event
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		HarpLog.debug("TouchEvent : type-"+event.getAction()+" x-"+event.getX()+" y-"+event.getY());
-		thread.pushEvent(event.getAction(),event.getX(),event.getY());
+		thread.pushEvent(event);
 		return true;
 	}
 	

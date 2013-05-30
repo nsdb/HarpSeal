@@ -15,6 +15,7 @@ import android.graphics.Paint;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
 public abstract class GameControllerBase extends Thread implements Controllable,Communicable {
@@ -32,6 +33,12 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 	
 	// motion event
 	private Queue<HarpEvent> event;
+	private boolean pressed;
+	private float pressX,pressY;
+	private int pressTime;
+	private final static int CLICK_RANGE=50;
+	private final static int CLICK_TIME=500;
+	private final static int LONGCLICK_TIME=1000;
 
 	// drawing
 	private SurfaceHolder holder;
@@ -50,6 +57,8 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 		this.isEnded=false;
 		this.period=PERIOD_BASE;
 		this.event=new LinkedList<HarpEvent>();
+		this.pressed=false;
+		this.pressTime=0;
 		this.holder=holder;
 		this.paint=new Paint();
 		this.mediaPlayer=new MediaPlayer();
@@ -96,7 +105,18 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 						scaleRate=(float)c.getWidth()/SCREEN_X;
 						transHeight=(float)(c.getHeight()-SCREEN_Y*scaleRate)*0.5f;
 						
-						// touch event
+						// long click check
+						if(pressed) {
+							pressTime+=period;
+							if(pressTime>=LONGCLICK_TIME) {
+								event.add(new HarpEvent(HarpEvent.MOTION_LONGCLICK,pressX,pressY));
+								HarpLog.debug("Action LongClick : "+ev.getX()+", "+ev.getY());
+								pressed=false;
+								pressTime=0;
+							}
+						}
+						
+						// process events
 						while(event.peek()!=null) {
 							ev=event.poll();
 							ev.regulate(scaleRate, transHeight);
@@ -172,8 +192,45 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 		isEnded=true;
 	}
 	
-	public final void pushEvent(int type,float x,float y) {
-		event.add(new HarpEvent(type,x,y));
+	public final void pushEvent(MotionEvent ev) {
+		switch(ev.getAction()) {
+
+		case MotionEvent.ACTION_DOWN:
+			event.add(new HarpEvent(HarpEvent.MOTION_DOWN,ev.getX(),ev.getY()));
+			HarpLog.debug("Action Down : "+ev.getX()+", "+ev.getY());
+			pressed=true;
+			pressX=ev.getX();
+			pressY=ev.getY();
+			pressTime=0;
+			break;
+			
+		case MotionEvent.ACTION_UP:
+			event.add(new HarpEvent(HarpEvent.MOTION_UP,ev.getX(),ev.getY()));
+			HarpLog.debug("Action Up : "+ev.getX()+", "+ev.getY());
+			if(pressed && pressTime<CLICK_TIME) {
+				event.add(new HarpEvent(HarpEvent.MOTION_CLICK,ev.getX(),ev.getY()));
+				HarpLog.debug("Action Click : "+ev.getX()+", "+ev.getY());
+			}
+			pressed=false;
+			pressTime=0;
+			break;
+			
+		case MotionEvent.ACTION_MOVE:
+			event.add(new HarpEvent(HarpEvent.MOTION_DRAG,ev.getX(),ev.getY()));
+			HarpLog.debug("Action Move : "+ev.getX()+", "+ev.getY());
+			if( pressed && Math.max(Math.abs(ev.getX()-pressX),Math.abs(ev.getY()-pressY)) > CLICK_RANGE ) {
+				HarpLog.debug("Click Range Out : "+(ev.getX()-pressX)+", "+(ev.getY()-pressY));
+				pressed=false;
+				pressTime=0;
+			}
+			break;
+			
+		//case MotionEvent.ACTION_SCROLL:
+		//	event.add(new HarpEvent(HarpEvent.MOTION_SCROLL,ev.getAxisValue(MotionEvent.AXIS_X),ev.getAxisValue(MotionEvent.AXIS_Y)));
+		//	HarpLog.debug("Action Scroll : "+ev.getX()+", "+ev.getY()+", "+ev.getAxisValue(MotionEvent.AXIS_X)+", "+ev.getAxisValue(MotionEvent.AXIS_Y));
+		//	break;
+			
+		}
 	}
 	
 	@Override

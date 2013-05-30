@@ -45,6 +45,7 @@ public class SampleBox extends GameObject {
 	@Override
 	public void drawScreen(Canvas c,Paint p,int layer) {
 		if(layer != Layer.LAYER_CHARACTER) return;
+		p.reset();
 		p.setColor(squareColor);
 		c.drawRect(squareRect,p);
 	}
