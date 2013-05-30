@@ -38,8 +38,8 @@ public class HarpLog {
 
 	private static String getCurrentTimeString() {
 		cal.setTimeInMillis(System.currentTimeMillis());
-		return "["+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)+":"+
-				cal.get(Calendar.SECOND)+":"+cal.get(Calendar.MILLISECOND)+"]";
+		return ""+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)+":"+
+				cal.get(Calendar.SECOND)+":"+cal.get(Calendar.MILLISECOND);
 	}
 	
 }
