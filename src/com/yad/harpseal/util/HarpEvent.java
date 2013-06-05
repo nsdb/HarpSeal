@@ -7,7 +7,6 @@ public class HarpEvent {
 	public final static int MOTION_UP=2;
 	public final static int MOTION_CLICK=3;
 	public final static int MOTION_LONGCLICK=4;
-	//public final static int MOTION_SCROLL=5;
 	
 	private int type;
 	private float x,y;

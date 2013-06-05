@@ -225,11 +225,6 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 			}
 			break;
 			
-		//case MotionEvent.ACTION_SCROLL:
-		//	event.add(new HarpEvent(HarpEvent.MOTION_SCROLL,ev.getAxisValue(MotionEvent.AXIS_X),ev.getAxisValue(MotionEvent.AXIS_Y)));
-		//	HarpLog.debug("Action Scroll : "+ev.getX()+", "+ev.getY()+", "+ev.getAxisValue(MotionEvent.AXIS_X)+", "+ev.getAxisValue(MotionEvent.AXIS_Y));
-		//	break;
-			
 		}
 	}
 	
