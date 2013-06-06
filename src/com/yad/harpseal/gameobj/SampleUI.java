@@ -29,6 +29,8 @@ public class SampleUI extends GameObject {
 
 	@Override
 	public void receiveMotion(HarpEvent ev,int layer) {
+		if(layer != Layer.LAYER_FIELD) return;
+		
 		type=ev.getType();
 		x=ev.getX();
 		y=ev.getY();
@@ -40,7 +42,7 @@ public class SampleUI extends GameObject {
 
 	@Override
 	public void drawScreen(Canvas c, Paint p, int layer) {
-		if(layer != Layer.LAYER_WINDOW) return;
+		if(layer != Layer.LAYER_FIELD) return;
 		int screenY=(Integer)con.get("screenY");
 		p.reset();
 

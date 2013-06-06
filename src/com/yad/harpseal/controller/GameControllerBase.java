@@ -6,6 +6,7 @@ import java.util.Queue;
 import com.yad.harpseal.constant.Layer;
 import com.yad.harpseal.util.Communicable;
 import com.yad.harpseal.util.Controllable;
+import com.yad.harpseal.util.Func;
 import com.yad.harpseal.util.HarpEvent;
 import com.yad.harpseal.util.HarpLog;
 
@@ -120,7 +121,7 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 						while(event.peek()!=null) {
 							ev=event.poll();
 							ev.regulate(scaleRate, transHeight);
-							for(int i=Layer.LAYER_SIZE-1;(i>0 && ev.isProcessed()==false);i--) {
+							for(int i=Layer.LAYER_SIZE-1;(i>=0 && ev.isProcessed()==false);i--) {
 								receiveMotion(ev,i);
 							}
 						}
@@ -218,7 +219,7 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 		case MotionEvent.ACTION_MOVE:
 			event.add(new HarpEvent(HarpEvent.MOTION_DRAG,ev.getX(),ev.getY()));
 			HarpLog.debug("Action Move : "+ev.getX()+", "+ev.getY());
-			if( pressed && Math.max(Math.abs(ev.getX()-pressX),Math.abs(ev.getY()-pressY)) > CLICK_RANGE ) {
+			if( pressed && Func.distan(pressX,pressY,ev.getX(),ev.getY()) > CLICK_RANGE ) {
 				HarpLog.debug("Click Range Out : "+(ev.getX()-pressX)+", "+(ev.getY()-pressY));
 				pressed=false;
 				pressTime=0;
