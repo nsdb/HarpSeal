@@ -1,10 +1,11 @@
-package com.yad.harpseal.gameobj;
+package com.yad.harpseal.gameobj.window;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
 import com.yad.harpseal.constant.Layer;
 import com.yad.harpseal.constant.Screen;
+import com.yad.harpseal.gameobj.GameObject;
 import com.yad.harpseal.util.Communicable;
 import com.yad.harpseal.util.HarpEvent;
 import com.yad.harpseal.util.Func;

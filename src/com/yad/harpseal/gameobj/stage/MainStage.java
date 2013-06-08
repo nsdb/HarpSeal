@@ -6,11 +6,11 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 
 import com.yad.harpseal.gameobj.GameObject;
-import com.yad.harpseal.gameobj.Joystick;
 import com.yad.harpseal.gameobj.SampleField;
 import com.yad.harpseal.gameobj.character.GoalFlag;
 import com.yad.harpseal.gameobj.character.PlayerSeal;
 import com.yad.harpseal.gameobj.tile.NormalTile;
+import com.yad.harpseal.gameobj.window.Joystick;
 import com.yad.harpseal.util.Communicable;
 import com.yad.harpseal.util.HarpEvent;
 import com.yad.harpseal.util.HarpLog;
