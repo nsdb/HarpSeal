@@ -6,6 +6,7 @@ import android.graphics.Paint.Align;
 
 import com.yad.harpseal.R;
 import com.yad.harpseal.constant.Layer;
+import com.yad.harpseal.constant.Screen;
 import com.yad.harpseal.util.Communicable;
 import com.yad.harpseal.util.HarpEvent;
 
@@ -43,7 +44,7 @@ public class SampleUI extends GameObject {
 	@Override
 	public void drawScreen(Canvas c, Paint p, int layer) {
 		if(layer != Layer.LAYER_FIELD) return;
-		int screenY=(Integer)con.get("screenY");
+		int screenY=Screen.SCREEN_Y;
 		p.reset();
 
 		// point box

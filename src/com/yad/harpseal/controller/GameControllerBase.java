@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import com.yad.harpseal.constant.Layer;
+import com.yad.harpseal.constant.Screen;
 import com.yad.harpseal.util.Communicable;
 import com.yad.harpseal.util.Controllable;
 import com.yad.harpseal.util.Func;
@@ -44,8 +45,6 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 	// drawing
 	private SurfaceHolder holder;
 	private Paint paint;
-	private final static int SCREEN_X=600;
-	private final static int SCREEN_Y=800;
 	
 	// sound
 	private MediaPlayer mediaPlayer;
@@ -103,8 +102,8 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 					if(c!=null) {
 						
 						// calculate scale, trans
-						scaleRate=(float)c.getWidth()/SCREEN_X;
-						transHeight=(float)(c.getHeight()-SCREEN_Y*scaleRate)*0.5f;
+						scaleRate=(float)c.getWidth()/Screen.SCREEN_X;
+						transHeight=(float)(c.getHeight()-Screen.SCREEN_Y*scaleRate)*0.5f;
 						
 						// long click check
 						if(pressed) {
@@ -276,12 +275,8 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 	
 	@Override
 	public Object get(String name) {
-		if(name.equals("screenX")) return SCREEN_X;
-		else if(name.equals("screenY")) return SCREEN_Y;
-		else {
-			HarpLog.error("Controller received invalid name of get() : "+name);
-			return null;
-		}
+		HarpLog.error("Controller received invalid name of get() : "+name);
+		return null;
 	}
 	
 }

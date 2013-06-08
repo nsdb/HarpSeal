@@ -5,6 +5,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 
 import com.yad.harpseal.constant.Layer;
+import com.yad.harpseal.constant.Screen;
 import com.yad.harpseal.util.Communicable;
 import com.yad.harpseal.util.HarpEvent;
 
@@ -25,13 +26,10 @@ public class SampleBox extends GameObject {
 		time+=ms;
 		if(time>=1000) {
 
-			int screenX=(Integer)con.get("screenX");
-			int screenY=(Integer)con.get("screenY");
-
 			time-=1000;
 			squareColor=0xFF000000 | (int)(Math.random()*0xFFFFFF);
-			squareRect.left=(int)(Math.random()*(screenX-100));
-			squareRect.top=(int)(Math.random()*(screenY-100));
+			squareRect.left=(int)(Math.random()*(Screen.SCREEN_X-100));
+			squareRect.top=(int)(Math.random()*(Screen.SCREEN_Y-100));
 			squareRect.right=squareRect.left+100;
 			squareRect.bottom=squareRect.top+100;
 		}

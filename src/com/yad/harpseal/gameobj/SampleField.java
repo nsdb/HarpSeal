@@ -5,6 +5,7 @@ import android.graphics.Paint;
 
 import com.yad.harpseal.R;
 import com.yad.harpseal.constant.Layer;
+import com.yad.harpseal.constant.Screen;
 import com.yad.harpseal.util.Communicable;
 import com.yad.harpseal.util.HarpEvent;
 
@@ -28,8 +29,8 @@ public class SampleField extends GameObject {
 	@Override
 	public void drawScreen(Canvas c, Paint p, int layer) {
 		if(layer != Layer.LAYER_FIELD) return;
-		int screenX=(Integer)con.get("screenX");
-		int screenY=(Integer)con.get("screenY");
+		int screenX=Screen.SCREEN_X;
+		int screenY=Screen.SCREEN_Y;
 		p.reset();
 
 		// outline

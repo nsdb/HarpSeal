@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 
 import com.yad.harpseal.constant.Layer;
+import com.yad.harpseal.constant.Screen;
 import com.yad.harpseal.util.Communicable;
 import com.yad.harpseal.util.HarpEvent;
 import com.yad.harpseal.util.Func;
@@ -29,8 +30,8 @@ public class Joystick extends GameObject {
 
 	public Joystick(Communicable con) {
 		super(con);
-		padX=(Integer)con.get("screenX")-PAD_RADIUS-PAD_MARGIN;
-		padY=(Integer)con.get("screenY")-PAD_RADIUS-PAD_MARGIN;
+		padX=Screen.SCREEN_X-PAD_RADIUS-PAD_MARGIN;
+		padY=Screen.SCREEN_Y-PAD_RADIUS-PAD_MARGIN;
 		stickX=0;
 		stickY=0;
 		activeDirection=DIRECTION_NONE;
