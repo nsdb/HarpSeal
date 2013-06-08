@@ -16,7 +16,7 @@ public class Joystick extends GameObject {
 	private int activeDirection;
 	private boolean grabbed;
 
-	private final static int PAD_MARGIN=30;
+	private final static int PAD_MARGIN=20;
 	private final static int PAD_RADIUS=75;
 	private final static int RANGE_ACTIVE=45;
 	private final static int RANGE_MAX=60;
@@ -98,31 +98,31 @@ public class Joystick extends GameObject {
 
 	@Override
 	public void drawScreen(Canvas c, Paint p, int layer) {		
-		p.reset();
 		if(layer != Layer.LAYER_WINDOW) return;
+		p.reset();
 		
 		// pad circle
 		p.setStyle(Paint.Style.FILL);
-		p.setColor(0x80BBBBBB);
+		p.setColor(0x20BBBBBB);
 		c.drawCircle(padX,padY,PAD_RADIUS,p);
 		p.setStyle(Paint.Style.STROKE);
 		p.setStrokeWidth(3);
-		p.setColor(0x80DDDDDD);
+		p.setColor(0x20DDDDDD);
 		float is2=(float)(1/Math.sqrt(2));
 		c.drawLine(padX,padY,padX+PAD_RADIUS*is2,padY+PAD_RADIUS*is2,p);
 		c.drawLine(padX,padY,padX-PAD_RADIUS*is2,padY+PAD_RADIUS*is2,p);
 		c.drawLine(padX,padY,padX+PAD_RADIUS*is2,padY-PAD_RADIUS*is2,p);
 		c.drawLine(padX,padY,padX-PAD_RADIUS*is2,padY-PAD_RADIUS*is2,p);
-		p.setColor(0x80000000);
+		p.setColor(0x40000000);
 		c.drawCircle(padX,padY,PAD_RADIUS,p);
 		
 		// stick
 		p.setStyle(Paint.Style.FILL);
-		p.setColor(0xB0999999);
+		p.setColor(0x40999999);
 		c.drawCircle(padX+stickX,padY+stickY,STICK_RADIUS,p);
 		p.setStyle(Paint.Style.STROKE);
 		p.setStrokeWidth(3);
-		p.setColor(0xB0000000);
+		p.setColor(0x40000000);
 		c.drawCircle(padX+stickX,padY+stickY,STICK_RADIUS,p);
 		
 	}
