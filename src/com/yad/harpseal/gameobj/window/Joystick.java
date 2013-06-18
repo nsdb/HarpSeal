@@ -20,7 +20,7 @@ public class Joystick extends GameObject {
 
 	private final static int PAD_MARGIN=20;
 	private final static int PAD_RADIUS=75;
-	private final static int RANGE_ACTIVE=45;
+	private final static int RANGE_ACTIVE=50;
 	private final static int RANGE_MAX=60;
 	private final static int STICK_RADIUS=50;
 	
@@ -36,6 +36,8 @@ public class Joystick extends GameObject {
 
 	@Override
 	public void playGame(int ms) {
+		if(activeDirection != Direction.NONE);
+			con.send("stickAction/"+activeDirection);
 	}
 
 	@Override
@@ -80,13 +82,14 @@ public class Joystick extends GameObject {
 		
 		// stick direction check
 		if(grabbed && distance>=RANGE_ACTIVE) {
-			if(stickX>=stickY && stickX>=-stickY) {
-				if(stickX>0) activeDirection=Direction.RIGHT; 
-				else activeDirection=Direction.LEFT;
-			} else {
-				if(stickY>0) activeDirection=Direction.UP; 
-				else activeDirection=Direction.DOWN;
-			}
+			if(stickX>=Math.abs(stickY))
+				activeDirection=Direction.RIGHT;
+			else if(stickX<=stickY && stickX<=-stickY)
+				activeDirection=Direction.LEFT;
+			else if(Math.abs(stickX)<stickY)
+				activeDirection=Direction.DOWN; 
+			else
+				activeDirection=Direction.UP;
 		} else {
 			activeDirection=Direction.NONE;
 		}

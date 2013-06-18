@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+import com.yad.harpseal.constant.Direction;
 import com.yad.harpseal.gameobj.GameObject;
 import com.yad.harpseal.gameobj.SampleField;
 import com.yad.harpseal.gameobj.character.GoalFlag;
@@ -42,6 +43,9 @@ public class GameStage extends GameObject {
 	private ArrayList<GameObject> tiles;
 	private ArrayList<GameObject> characters;
 	
+	// character (also exist in 'characters')
+	private PlayerSeal player;
+	
 	// field
 	SampleField field;
 	
@@ -52,6 +56,7 @@ public class GameStage extends GameObject {
 		super(con);
 		field=new SampleField(this);
 		stick=new Joystick(this);
+		player=null;
 		
 		// map vaildity check... later
 		tileString=tileSample;
@@ -65,16 +70,22 @@ public class GameStage extends GameObject {
 		characters=new ArrayList<GameObject>();
 		for(int y=0;y<mapHeight;y++) {
 			for(int x=0;x<mapWidth;x++) {
+				
 				// create tiles
 				switch(tileString[y].charAt(x)) {
 				case '0': break;
 				case '1': tiles.add(new NormalTile(this,x,y)); break;
 				default: HarpLog.danger("Invalid tile type"); break;
 				}
+				
 				// create characters
 				switch(charString[y].charAt(x)) {
 				case '0': break;
-				case '1': characters.add(new PlayerSeal(this,x,y)); break;
+				case '1':
+					player=new PlayerSeal(this,x,y);
+					characters.add(player);
+					break;
+					
 				case '2': characters.add(new GoalFlag(this,x,y)); break;
 				default: HarpLog.danger("Invalid character type"); break;
 				}
@@ -125,10 +136,32 @@ public class GameStage extends GameObject {
 			o.restoreData();
 		field.restoreData();
 		stick.restoreData();
+		player=null;
 	}
 
 	@Override
 	public int send(String msg) {
+		String[] msgs=msg.split("/");
+
+		if(msgs[0].equals("stickAction")) {
+
+			if(player==null) return 0;
+			else {
+				// tile check
+				int mapX=(Integer)player.get("mapX");
+				int mapY=(Integer)player.get("mapY");
+				switch(Integer.parseInt(msgs[1])) {
+				case Direction.UP: mapY-=1; break;
+				case Direction.LEFT: mapX-=1; break;
+				case Direction.RIGHT: mapX+=1; break;
+				case Direction.DOWN: mapY+=1; break;
+				}
+				for(GameObject o : tiles)
+					if((Integer)o.get("mapX")==mapX && (Integer)o.get("mapY")==mapY)
+						player.send("move/"+msgs[1]);
+				return 1;
+			}
+		}
 		return con.send(msg);
 	}
 
