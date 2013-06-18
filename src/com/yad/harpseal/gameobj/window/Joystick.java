@@ -3,6 +3,7 @@ package com.yad.harpseal.gameobj.window;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+import com.yad.harpseal.constant.Direction;
 import com.yad.harpseal.constant.Layer;
 import com.yad.harpseal.constant.Screen;
 import com.yad.harpseal.gameobj.GameObject;
@@ -23,19 +24,13 @@ public class Joystick extends GameObject {
 	private final static int RANGE_MAX=60;
 	private final static int STICK_RADIUS=50;
 	
-	private final static int DIRECTION_NONE=0;
-	private final static int DIRECTION_UP=1;
-	private final static int DIRECTION_DOWN=2;
-	private final static int DIRECTION_LEFT=3;
-	private final static int DIRECTION_RIGHT=4;
-
 	public Joystick(Communicable con) {
 		super(con);
 		padX=Screen.SCREEN_X-PAD_RADIUS-PAD_MARGIN;
 		padY=Screen.SCREEN_Y-PAD_RADIUS-PAD_MARGIN;
 		stickX=0;
 		stickY=0;
-		activeDirection=DIRECTION_NONE;
+		activeDirection=Direction.NONE;
 		grabbed=false;
 	}
 
@@ -86,14 +81,14 @@ public class Joystick extends GameObject {
 		// stick direction check
 		if(grabbed && distance>=RANGE_ACTIVE) {
 			if(stickX>=stickY && stickX>=-stickY) {
-				if(stickX>0) activeDirection=DIRECTION_RIGHT; 
-				else activeDirection=DIRECTION_LEFT;
+				if(stickX>0) activeDirection=Direction.RIGHT; 
+				else activeDirection=Direction.LEFT;
 			} else {
-				if(stickY>0) activeDirection=DIRECTION_UP; 
-				else activeDirection=DIRECTION_DOWN;
+				if(stickY>0) activeDirection=Direction.UP; 
+				else activeDirection=Direction.DOWN;
 			}
 		} else {
-			activeDirection=DIRECTION_NONE;
+			activeDirection=Direction.NONE;
 		}
 	}
 
