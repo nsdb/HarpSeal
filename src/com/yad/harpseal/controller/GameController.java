@@ -5,16 +5,16 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.SurfaceHolder;
 
-import com.yad.harpseal.gameobj.stage.MainStage;
+import com.yad.harpseal.gameobj.stage.GameStage;
 import com.yad.harpseal.util.HarpEvent;
 
 public class GameController extends GameControllerBase {
 
-	MainStage main;
+	GameStage main;
 
 	public GameController(Context context,SurfaceHolder holder) {
 		super(context,holder);
-		main=new MainStage(this);
+		main=new GameStage(this);
 	}
 
 	@Override

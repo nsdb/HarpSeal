@@ -15,7 +15,7 @@ import com.yad.harpseal.util.Communicable;
 import com.yad.harpseal.util.HarpEvent;
 import com.yad.harpseal.util.HarpLog;
 
-public class MainStage extends GameObject {
+public class GameStage extends GameObject {
 	
 	// sample map structure
 	private final static String[] tileSample= {
@@ -48,7 +48,7 @@ public class MainStage extends GameObject {
 	// user interface
 	Joystick stick;
 	
-	public MainStage(Communicable con) {
+	public GameStage(Communicable con) {
 		super(con);
 		field=new SampleField(this);
 		stick=new Joystick(this);
