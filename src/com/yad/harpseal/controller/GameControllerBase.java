@@ -231,7 +231,6 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 	@Override
 	public int send(String msg) {
 		HarpLog.debug("Controller received message : "+msg);
-		
 		String[] msgs=msg.split("/");
 		if(msgs[0].equals("playSound")) {
 			
