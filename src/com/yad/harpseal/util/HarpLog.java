@@ -6,13 +6,15 @@ public class HarpLog {
 	
 	private static Calendar cal;
 	
+	private static final boolean DEBUG=false;
+	
 	public static void init(String type) {
 		cal=Calendar.getInstance();
 		info("Logger inited");
 	}
 	
 	public static void debug(String msg) {
-		log("debug",msg);
+		if(DEBUG) log("debug",msg);
 	}
 
 	public static void info(String msg) {
