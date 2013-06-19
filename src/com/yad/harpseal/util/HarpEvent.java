@@ -12,6 +12,7 @@ public class HarpEvent {
 	private float x,y;
 	private boolean regulated;
 	private boolean processed;
+	private float cameraX,cameraY;
 	
 	public HarpEvent(int type,float x,float y) {
 		this.type=type;
@@ -19,6 +20,8 @@ public class HarpEvent {
 		this.y=y;
 		this.regulated=false;
 		this.processed=false;
+		this.cameraX=0;
+		this.cameraY=0;
 	}
 	
 	// Regulate event to app screen
@@ -30,6 +33,12 @@ public class HarpEvent {
 		y/=scaleRate;
 		y-=transHeight;
 		regulated=true;
+	}
+	
+	// camera setting
+	public void setCamera(float cx, float cy) {
+		this.cameraX=cx;
+		this.cameraY=cy;
 	}
 	
 	// carve that it is processed
@@ -51,13 +60,13 @@ public class HarpEvent {
 		if(processed) {
 			HarpLog.danger("Event is already processed");
 		}
-		return x;
+		return x+cameraX;
 	}
 	public float getY() {
 		if(processed) {
 			HarpLog.danger("Event is already processed");
 		}
-		return y;
+		return y+cameraY;
 	}	
 	public boolean isProcessed() { return processed; }
 

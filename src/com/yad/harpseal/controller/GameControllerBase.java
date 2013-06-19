@@ -120,6 +120,9 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 						while(event.peek()!=null) {
 							ev=event.poll();
 							ev.regulate(scaleRate, transHeight);
+							if( (ev.getType()==HarpEvent.MOTION_DOWN || ev.getType()==HarpEvent.MOTION_CLICK) &&
+								(ev.getX()<0 || ev.getX()>Screen.SCREEN_X || ev.getY()<0 || ev.getY()>Screen.SCREEN_Y) )
+								continue;
 							for(int i=Layer.LAYER_SIZE-1;(i>=0 && ev.isProcessed()==false);i--) {
 								receiveMotion(ev,i);
 							}
@@ -131,6 +134,7 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 						c.drawRect(0,0,c.getWidth(),c.getHeight(),paint);
 						c.translate(0,transHeight);
 						c.scale(scaleRate,scaleRate);
+						c.clipRect(0,0,Screen.SCREEN_X,Screen.SCREEN_Y);
 						for(int i=0;i<Layer.LAYER_SIZE;i++)
 							drawScreen(c,paint,i);
 						

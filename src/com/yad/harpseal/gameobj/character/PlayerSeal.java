@@ -99,6 +99,9 @@ public class PlayerSeal extends GameObject {
 	public Object get(String name) {
 		if(name.equals("mapX")) return mapX;
 		else if(name.equals("mapY")) return mapY;
+		else if(name.equals("moveDirection")) return moveDirection;
+		else if(name.equals("moveTime")) return moveTime;
+		else if(name.equals("moveValue")) return MOVE_VALUE;
 		else {
 			HarpLog.error("PlayerSeal received invalid name of get() : "+name);
 			return null;

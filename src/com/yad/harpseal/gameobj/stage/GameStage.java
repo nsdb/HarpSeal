@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 
 import com.yad.harpseal.constant.Direction;
+import com.yad.harpseal.constant.Layer;
+import com.yad.harpseal.constant.Screen;
 import com.yad.harpseal.constant.TileType;
 import com.yad.harpseal.gameobj.GameObject;
 import com.yad.harpseal.gameobj.SampleField;
@@ -15,6 +17,7 @@ import com.yad.harpseal.gameobj.tile.NormalTile;
 import com.yad.harpseal.gameobj.tile.RotatableTile;
 import com.yad.harpseal.gameobj.window.Joystick;
 import com.yad.harpseal.util.Communicable;
+import com.yad.harpseal.util.Func;
 import com.yad.harpseal.util.HarpEvent;
 import com.yad.harpseal.util.HarpLog;
 
@@ -22,20 +25,26 @@ public class GameStage extends GameObject {
 	
 	// sample map structure
 	private final static String[] tileSample= {
-		"11252",
-		"41342",
-		"51114",
-		"01423",
-		"01511",
-		"02341"
+		"11252234",
+		"41342235",
+		"51114123",
+		"01423234",
+		"01511132",
+		"02341551",
+		"13231212",
+		"31213112",
+		"02314541",
 	};
 	private final static String[] charSample= {
-		"10000",
-		"00000",
-		"00000",
-		"00000",
-		"00000",
-		"00002"
+		"10000000",
+		"00000000",
+		"00000000",
+		"00000000",
+		"00000000",
+		"00000000",
+		"00000000",
+		"00000000",
+		"00000002"
 	};
 	
 	// map
@@ -44,6 +53,7 @@ public class GameStage extends GameObject {
 	private int mapWidth,mapHeight;
 	private ArrayList<GameObject> tiles;
 	private ArrayList<GameObject> characters;
+	private float cameraX,cameraY;
 	
 	// character (also exist in 'characters')
 	private PlayerSeal player;
@@ -97,6 +107,17 @@ public class GameStage extends GameObject {
 				}
 			}
 		}
+		
+		// camera point init
+		if(player==null) {
+			cameraX=0;
+			cameraY=0;
+		} else {
+			cameraX=(Integer)player.get("mapX")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_LEFT-Screen.SCREEN_X/2;
+			cameraY=(Integer)player.get("mapY")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_TOP-Screen.SCREEN_Y/2;
+			cameraX=Func.limit(cameraX, 0, mapWidth*Screen.TILE_LENGTH-Screen.SCREEN_X/2);
+			cameraY=Func.limit(cameraY, 0,  mapHeight*Screen.TILE_LENGTH-Screen.SCREEN_Y/2);
+		}
 	}
 
 	@Override
@@ -107,10 +128,33 @@ public class GameStage extends GameObject {
 			o.playGame(ms);
 		field.playGame(ms);
 		stick.playGame(ms);
+		
+		// camera point setting
+		if(player != null) {
+			cameraX=(Integer)player.get("mapX")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_LEFT-Screen.SCREEN_X/2;
+			cameraY=(Integer)player.get("mapY")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_TOP-Screen.SCREEN_Y/2;
+			int pDirection=(Integer)player.get("moveDirection");
+			if(pDirection!=Direction.NONE) {
+				float value=(float)Screen.TILE_LENGTH*(Integer)player.get("moveTime")/(Integer)player.get("moveValue")-Screen.TILE_LENGTH;
+				switch(pDirection) {
+				case Direction.LEFT: cameraX-=value; break;
+				case Direction.RIGHT: cameraX+=value; break;
+				case Direction.UP: cameraY-=value; break;
+				case Direction.DOWN: cameraY+=value; break;
+				}
+			}
+			cameraX=Func.limit(cameraX, 0, mapWidth*Screen.TILE_LENGTH-Screen.SCREEN_X/2);
+			cameraY=Func.limit(cameraY, 0,  mapHeight*Screen.TILE_LENGTH-Screen.SCREEN_Y/2);
+		}
 	}
 
 	@Override
 	public void receiveMotion(HarpEvent ev, int layer) {
+
+		// camera setting
+		if(layer==Layer.LAYER_FIELD) ev.setCamera(cameraX, cameraY);
+		else if(layer==Layer.LAYER_WINDOW) ev.setCamera(0, 0);
+		
 		for(GameObject o : tiles) {
 			o.receiveMotion(ev, layer);
 			if(ev.isProcessed()) return;
@@ -126,6 +170,11 @@ public class GameStage extends GameObject {
 
 	@Override
 	public void drawScreen(Canvas c, Paint p, int layer) {
+		
+		// camera setting
+		if(layer==Layer.LAYER_TILE) c.translate(-cameraX,-cameraY);
+		else if(layer==Layer.LAYER_WINDOW) c.translate(cameraX,cameraY);
+		
 		for(GameObject o : tiles)
 			o.drawScreen(c, p, layer);
 		for(GameObject o : characters)
