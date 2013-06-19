@@ -115,8 +115,8 @@ public class GameStage extends GameObject {
 		} else {
 			cameraX=(Integer)player.get("mapX")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_LEFT-Screen.SCREEN_X/2;
 			cameraY=(Integer)player.get("mapY")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_TOP-Screen.SCREEN_Y/2;
-			cameraX=Func.limit(cameraX, 0, mapWidth*Screen.TILE_LENGTH-Screen.SCREEN_X/2);
-			cameraY=Func.limit(cameraY, 0,  mapHeight*Screen.TILE_LENGTH-Screen.SCREEN_Y/2);
+			cameraX=Func.limit(cameraX, 0, mapWidth*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_LEFT*2-Screen.SCREEN_X);
+			cameraY=Func.limit(cameraY, 0,  mapHeight*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_TOP*2-Screen.SCREEN_Y);
 		}
 	}
 
@@ -143,8 +143,8 @@ public class GameStage extends GameObject {
 				case Direction.DOWN: cameraY+=value; break;
 				}
 			}
-			cameraX=Func.limit(cameraX, 0, mapWidth*Screen.TILE_LENGTH-Screen.SCREEN_X/2);
-			cameraY=Func.limit(cameraY, 0,  mapHeight*Screen.TILE_LENGTH-Screen.SCREEN_Y/2);
+			cameraX=Func.limit(cameraX, 0, mapWidth*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_LEFT*2-Screen.SCREEN_X);
+			cameraY=Func.limit(cameraY, 0,  mapHeight*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_TOP*2-Screen.SCREEN_Y);
 		}
 	}
 
