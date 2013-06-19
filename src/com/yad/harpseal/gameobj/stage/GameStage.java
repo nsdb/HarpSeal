@@ -157,6 +157,11 @@ public class GameStage extends GameObject {
 				return 1;
 			} else return 0;
 		}
+		else if(msgs[0].equals("rotatableCheck")) {
+			
+			if(rotatableCheck(Integer.parseInt(msgs[1]),Integer.parseInt(msgs[2]))==true) return 1;
+			else return 0;
+		}
 		return con.send(msg);
 	}
 
@@ -223,6 +228,14 @@ public class GameStage extends GameObject {
 			}
 		}
 		return false;
+	}
+	
+	private boolean rotatableCheck(int x,int y) {
+		
+		for(GameObject o : characters)
+			if((Integer)o.get("mapX")==x && (Integer)o.get("mapY")==y)
+				return false;
+		return true;
 	}
 
 }

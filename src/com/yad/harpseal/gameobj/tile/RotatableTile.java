@@ -10,6 +10,7 @@ import com.yad.harpseal.constant.Layer;
 import com.yad.harpseal.constant.Screen;
 import com.yad.harpseal.constant.TileType;
 import com.yad.harpseal.util.Communicable;
+import com.yad.harpseal.util.HarpEvent;
 import com.yad.harpseal.util.HarpLog;
 
 public class RotatableTile extends NormalTile {
@@ -33,6 +34,18 @@ public class RotatableTile extends NormalTile {
 		case TileType.RT_FORK: break;
 		case TileType.RT_INTERSECTION: break;
 		default: HarpLog.error("Invalid Tile Type : "+type);
+		}
+	}
+	
+	@Override
+	public void receiveMotion(HarpEvent ev, int layer) {
+		if(layer != Layer.LAYER_FIELD) return;
+		if(ev.getType() != HarpEvent.MOTION_CLICK) return;
+		int pointX=(int)(ev.getX()-Screen.FIELD_MARGIN_LEFT)/Screen.TILE_LENGTH;
+		int pointY=(int)(ev.getY()-Screen.FIELD_MARGIN_TOP)/Screen.TILE_LENGTH;
+		if(pointX==mapX && pointY==mapY) {
+			if(con.send("rotatableCheck/"+mapX+"/"+mapY)==1)
+				direction=Direction.clockwise(direction);
 		}
 	}
 
