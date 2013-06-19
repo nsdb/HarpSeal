@@ -159,7 +159,7 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 			////
 			
 			// wait
-			HarpLog.info("Game thread is waiting being restarted");
+			HarpLog.debug("Game thread is waiting being restarted");
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
