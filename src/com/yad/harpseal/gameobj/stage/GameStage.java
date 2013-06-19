@@ -146,21 +146,10 @@ public class GameStage extends GameObject {
 		if(msgs[0].equals("stickAction")) {
 
 			if(player==null) return 0;
-			else {
-				// tile check
-				int mapX=(Integer)player.get("mapX");
-				int mapY=(Integer)player.get("mapY");
-				switch(Integer.parseInt(msgs[1])) {
-				case Direction.UP: mapY-=1; break;
-				case Direction.LEFT: mapX-=1; break;
-				case Direction.RIGHT: mapX+=1; break;
-				case Direction.DOWN: mapY+=1; break;
-				}
-				for(GameObject o : tiles)
-					if((Integer)o.get("mapX")==mapX && (Integer)o.get("mapY")==mapY)
-						player.send("move/"+msgs[1]);
+			else if(tileCheck(Integer.parseInt(msgs[1]))==true) {
+				player.send("move/"+msgs[1]);
 				return 1;
-			}
+			} else return 0;
 		}
 		return con.send(msg);
 	}
@@ -168,6 +157,32 @@ public class GameStage extends GameObject {
 	@Override
 	public Object get(String name) {
 		return con.get(name);
+	}
+	
+	private boolean tileCheck(int direction) {
+		
+		// destination
+		int mapX=(Integer)player.get("mapX");
+		int mapY=(Integer)player.get("mapY");
+		switch(direction) {
+		case Direction.UP: mapY-=1; break;
+		case Direction.LEFT: mapX-=1; break;
+		case Direction.RIGHT: mapX+=1; break;
+		case Direction.DOWN: mapY+=1; break;
+		}
+		
+		// check each tile
+		for(GameObject o : tiles) {
+			if( (Integer)o.get("mapX")==mapX &&
+				(Integer)o.get("mapY")==mapY) {
+
+				// tile type
+				if(o.getClass()==NormalTile.class)
+					return true;
+				
+			}
+		}
+		return false;
 	}
 
 }
