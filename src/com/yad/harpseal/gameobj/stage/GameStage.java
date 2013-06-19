@@ -152,7 +152,7 @@ public class GameStage extends GameObject {
 		if(msgs[0].equals("stickAction")) {
 
 			if(player==null) return 0;
-			else if(tileCheck(player,Integer.parseInt(msgs[1]))==true) {
+			else if(movableCheck(player,Integer.parseInt(msgs[1]))==true) {
 				player.send("move/"+msgs[1]);
 				return 1;
 			} else return 0;
@@ -165,7 +165,7 @@ public class GameStage extends GameObject {
 		return con.get(name);
 	}
 	
-	private boolean tileCheck(GameObject target,int direction) {
+	private boolean movableCheck(GameObject target,int direction) {
 		
 		// start point check
 		int mapX=(Integer)target.get("mapX");
