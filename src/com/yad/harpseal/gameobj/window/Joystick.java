@@ -22,7 +22,7 @@ public class Joystick extends GameObject {
 	private final static int PAD_RADIUS=75;
 	private final static int RANGE_ACTIVE=50;
 	private final static int RANGE_MAX=60;
-	private final static int STICK_RADIUS=50;
+	private final static int STICK_RADIUS=60;
 	
 	public Joystick(Communicable con) {
 		super(con);
@@ -36,7 +36,7 @@ public class Joystick extends GameObject {
 
 	@Override
 	public void playGame(int ms) {
-		if(activeDirection != Direction.NONE);
+		if(activeDirection != Direction.NONE)
 			con.send("stickAction/"+activeDirection);
 	}
 

@@ -12,7 +12,7 @@ import com.yad.harpseal.util.HarpLog;
 
 public class NormalTile extends GameObject {
 	
-	private int mapX,mapY;
+	protected int mapX,mapY;
 
 	public NormalTile(Communicable con,int mapX,int mapY) {
 		super(con);
@@ -59,7 +59,7 @@ public class NormalTile extends GameObject {
 		if(name.equals("mapX")) return mapX;
 		else if(name.equals("mapY")) return mapY;
 		else {
-			HarpLog.error("NormalTile received invalid name of get() : "+name);
+			HarpLog.error("Tile received invalid name of get() : "+name);
 			return null;
 		}
 	}

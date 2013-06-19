@@ -6,11 +6,13 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 
 import com.yad.harpseal.constant.Direction;
+import com.yad.harpseal.constant.TileType;
 import com.yad.harpseal.gameobj.GameObject;
 import com.yad.harpseal.gameobj.SampleField;
 import com.yad.harpseal.gameobj.character.GoalFlag;
 import com.yad.harpseal.gameobj.character.PlayerSeal;
 import com.yad.harpseal.gameobj.tile.NormalTile;
+import com.yad.harpseal.gameobj.tile.RotatableTile;
 import com.yad.harpseal.gameobj.window.Joystick;
 import com.yad.harpseal.util.Communicable;
 import com.yad.harpseal.util.HarpEvent;
@@ -20,12 +22,12 @@ public class GameStage extends GameObject {
 	
 	// sample map structure
 	private final static String[] tileSample= {
-		"11000",
-		"01000",
-		"01110",
-		"01010",
-		"01011",
-		"00001"
+		"11252",
+		"41342",
+		"51114",
+		"01423",
+		"01511",
+		"02341"
 	};
 	private final static String[] charSample= {
 		"10000",
@@ -75,6 +77,10 @@ public class GameStage extends GameObject {
 				switch(tileString[y].charAt(x)) {
 				case '0': break;
 				case '1': tiles.add(new NormalTile(this,x,y)); break;
+				case '2': tiles.add(new RotatableTile(this,x,y,TileType.RT_BRIDGE)); break;
+				case '3': tiles.add(new RotatableTile(this,x,y,TileType.RT_CORNER)); break;
+				case '4': tiles.add(new RotatableTile(this,x,y,TileType.RT_FORK)); break;
+				case '5': tiles.add(new RotatableTile(this,x,y,TileType.RT_INTERSECTION)); break;
 				default: HarpLog.danger("Invalid tile type"); break;
 				}
 				
@@ -146,7 +152,7 @@ public class GameStage extends GameObject {
 		if(msgs[0].equals("stickAction")) {
 
 			if(player==null) return 0;
-			else if(tileCheck(Integer.parseInt(msgs[1]))==true) {
+			else if(tileCheck(player,Integer.parseInt(msgs[1]))==true) {
 				player.send("move/"+msgs[1]);
 				return 1;
 			} else return 0;
@@ -159,19 +165,41 @@ public class GameStage extends GameObject {
 		return con.get(name);
 	}
 	
-	private boolean tileCheck(int direction) {
+	private boolean tileCheck(GameObject target,int direction) {
 		
-		// destination
-		int mapX=(Integer)player.get("mapX");
-		int mapY=(Integer)player.get("mapY");
+		// start point check
+		int mapX=(Integer)target.get("mapX");
+		int mapY=(Integer)target.get("mapY");
+		for(GameObject o : tiles) {
+			if( (Integer)o.get("mapX")==mapX &&
+				(Integer)o.get("mapY")==mapY) {
+				
+				// tile type
+				if(o.getClass()==NormalTile.class)
+					continue;
+				else if(o.getClass()==RotatableTile.class) {
+					int tileType=(Integer)o.get("type");
+					int tileDirection=(Integer)o.get("direction");
+					if(direction==tileDirection) continue;
+					switch(tileType) {
+					case TileType.RT_BRIDGE: if(direction!=Direction.reverse(tileDirection)) return false; break;
+					case TileType.RT_CORNER: if(direction!=Direction.clockwise(tileDirection)) return false; break;
+					case TileType.RT_FORK: if(direction!=Direction.clockwise(tileDirection) && direction!=Direction.clockwiseR(tileDirection)) return false; break;
+					case TileType.RT_INTERSECTION: break;
+					default: HarpLog.error("Invalid Tile Type : "+tileType); return false;
+					}
+				}
+			}
+		}
+		
+		// destination check
 		switch(direction) {
 		case Direction.UP: mapY-=1; break;
 		case Direction.LEFT: mapX-=1; break;
 		case Direction.RIGHT: mapX+=1; break;
 		case Direction.DOWN: mapY+=1; break;
+		default: HarpLog.error("Invalid Direction : "+direction); return false;
 		}
-		
-		// check each tile
 		for(GameObject o : tiles) {
 			if( (Integer)o.get("mapX")==mapX &&
 				(Integer)o.get("mapY")==mapY) {
@@ -179,6 +207,18 @@ public class GameStage extends GameObject {
 				// tile type
 				if(o.getClass()==NormalTile.class)
 					return true;
+				else if(o.getClass()==RotatableTile.class) {
+					int tileType=(Integer)o.get("type");
+					int tileDirection=(Integer)o.get("direction");
+					if(direction==Direction.reverse(tileDirection)) return true;
+					switch(tileType) {
+					case TileType.RT_BRIDGE: return (direction==tileDirection);
+					case TileType.RT_CORNER: return (direction==Direction.clockwiseR(tileDirection));
+					case TileType.RT_FORK: return (direction==Direction.clockwiseR(tileDirection) || direction==Direction.clockwise(tileDirection));
+					case TileType.RT_INTERSECTION: return true;
+					default: HarpLog.error("Invalid Tile Type : "+tileType); return false;
+					}
+				}
 				
 			}
 		}
