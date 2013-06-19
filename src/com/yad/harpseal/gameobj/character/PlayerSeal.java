@@ -17,7 +17,7 @@ public class PlayerSeal extends GameObject {
 
 	private int moveDirection;
 	private int moveTime;
-	private final static int MOVE_VALUE=500; 
+	private final static int MOVE_VALUE=400; 
 
 	public PlayerSeal(Communicable con,int mapX,int mapY) {
 		super(con);
