@@ -109,15 +109,9 @@ public class GameStage extends GameObject {
 		}
 		
 		// camera point init
-		if(player==null) {
-			cameraX=0;
-			cameraY=0;
-		} else {
-			cameraX=(Integer)player.get("mapX")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_LEFT-Screen.SCREEN_X/2;
-			cameraY=(Integer)player.get("mapY")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_TOP-Screen.SCREEN_Y/2;
-			cameraX=Func.limit(cameraX, 0, mapWidth*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_LEFT*2-Screen.SCREEN_X);
-			cameraY=Func.limit(cameraY, 0,  mapHeight*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_TOP*2-Screen.SCREEN_Y);
-		}
+		cameraX=0;
+		cameraY=0;
+		regulateCamera(player);
 	}
 
 	@Override
@@ -130,22 +124,7 @@ public class GameStage extends GameObject {
 		stick.playGame(ms);
 		
 		// camera point setting
-		if(player != null) {
-			cameraX=(Integer)player.get("mapX")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_LEFT-Screen.SCREEN_X/2;
-			cameraY=(Integer)player.get("mapY")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_TOP-Screen.SCREEN_Y/2;
-			int pDirection=(Integer)player.get("moveDirection");
-			if(pDirection!=Direction.NONE) {
-				float value=(float)Screen.TILE_LENGTH*(Integer)player.get("moveTime")/(Integer)player.get("moveValue")-Screen.TILE_LENGTH;
-				switch(pDirection) {
-				case Direction.LEFT: cameraX-=value; break;
-				case Direction.RIGHT: cameraX+=value; break;
-				case Direction.UP: cameraY-=value; break;
-				case Direction.DOWN: cameraY+=value; break;
-				}
-			}
-			cameraX=Func.limit(cameraX, 0, mapWidth*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_LEFT*2-Screen.SCREEN_X);
-			cameraY=Func.limit(cameraY, 0,  mapHeight*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_TOP*2-Screen.SCREEN_Y);
-		}
+		regulateCamera(player);
 	}
 
 	@Override
@@ -217,6 +196,33 @@ public class GameStage extends GameObject {
 	@Override
 	public Object get(String name) {
 		return con.get(name);
+	}
+	
+	private void regulateCamera(GameObject target) {
+		
+		if(target == null) return;
+		
+		// whole character
+		cameraX=(Integer)target.get("mapX")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_LEFT-Screen.SCREEN_X/2;
+		cameraY=(Integer)target.get("mapY")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_TOP-Screen.SCREEN_Y/2;
+		
+		// player seal (movable character)
+		if(target.getClass()==PlayerSeal.class) {
+			int pDirection=(Integer)target.get("moveDirection");
+			if(pDirection!=Direction.NONE) {
+				float value=(float)Screen.TILE_LENGTH*(Integer)target.get("moveTime")/(Integer)target.get("moveValue")-Screen.TILE_LENGTH;
+				switch(pDirection) {
+				case Direction.LEFT: cameraX-=value; break;
+				case Direction.RIGHT: cameraX+=value; break;
+				case Direction.UP: cameraY-=value; break;
+				case Direction.DOWN: cameraY+=value; break;
+				}
+			}
+		}
+		
+		// limit
+		cameraX=Func.limit(cameraX, 0, mapWidth*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_LEFT*2-Screen.SCREEN_X);
+		cameraY=Func.limit(cameraY, 0,  mapHeight*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_TOP*2-Screen.SCREEN_Y);
 	}
 	
 	private boolean movableCheck(GameObject target,int direction) {
