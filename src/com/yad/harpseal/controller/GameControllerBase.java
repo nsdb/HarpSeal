@@ -278,8 +278,12 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 	
 	@Override
 	public Object get(String name) {
-		HarpLog.error("Controller received invalid name of get() : "+name);
-		return null;
+		if(name.equals("resources"))
+			return context.getResources();
+		else {
+			HarpLog.error("Controller received invalid name of get() : "+name);
+			return null;			
+		}
 	}
 	
 }

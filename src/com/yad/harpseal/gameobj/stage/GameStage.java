@@ -1,6 +1,8 @@
 package com.yad.harpseal.gameobj.stage;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -11,6 +13,7 @@ import com.yad.harpseal.constant.Screen;
 import com.yad.harpseal.constant.TileType;
 import com.yad.harpseal.gameobj.GameObject;
 import com.yad.harpseal.gameobj.SampleField;
+import com.yad.harpseal.gameobj.character.Fish;
 import com.yad.harpseal.gameobj.character.GoalFlag;
 import com.yad.harpseal.gameobj.character.PlayerSeal;
 import com.yad.harpseal.gameobj.tile.NormalTile;
@@ -36,13 +39,13 @@ public class GameStage extends GameObject {
 		"02314541",
 	};
 	private final static String[] charSample= {
-		"10000000",
+		"13000000",
 		"00000000",
 		"00000000",
 		"00000000",
 		"00000000",
 		"00000000",
-		"00000000",
+		"00030030",
 		"00000000",
 		"00000002"
 	};
@@ -58,6 +61,7 @@ public class GameStage extends GameObject {
 	// objects
 	private ArrayList<GameObject> tiles;
 	private ArrayList<GameObject> characters;
+	private Queue<GameObject> removed;
 	private SampleField field;
 	private Joystick stick;
 	private PlayerSeal player;	// also exists in 'characters'
@@ -89,6 +93,7 @@ public class GameStage extends GameObject {
 		mapHeight=tileString.length;
 		tiles=new ArrayList<GameObject>();
 		characters=new ArrayList<GameObject>();
+		removed=new LinkedList<GameObject>();
 		for(int y=0;y<mapHeight;y++) {
 			for(int x=0;x<mapWidth;x++) {
 				
@@ -112,6 +117,7 @@ public class GameStage extends GameObject {
 					break;
 					
 				case '2': characters.add(new GoalFlag(this,x,y)); break;
+				case '3': characters.add(new Fish(this,x,y)); break;
 				default: HarpLog.danger("Invalid character type"); break;
 				}
 			}
@@ -136,6 +142,8 @@ public class GameStage extends GameObject {
 		field.playGame(ms);
 		stick.playGame(ms);
 		regulateCamera(player);
+		tiles.remove(removed.peek());
+		characters.remove(removed.poll());
 	}
 
 	@Override
@@ -201,6 +209,13 @@ public class GameStage extends GameObject {
 			if(rotatableCheck(Integer.parseInt(msgs[1]),Integer.parseInt(msgs[2]))==true) return 1;
 			else return 0;
 		}
+		else if(msgs[0].equals("moved")) {
+			if(msgs[1].equals("PlayerSeal")) {
+				stepCount+=1;
+				eatFish(Integer.parseInt(msgs[2]), Integer.parseInt(msgs[3]));
+			}
+			return 1;
+		}
 		return con.send(msg);
 	}
 
@@ -215,7 +230,7 @@ public class GameStage extends GameObject {
 	}
 	
 	
-	//// private method
+	//// private method (game play)
 	
 	
 	private void regulateCamera(GameObject target) {
@@ -308,9 +323,33 @@ public class GameStage extends GameObject {
 	private boolean rotatableCheck(int x,int y) {
 		
 		for(GameObject o : characters)
-			if((Integer)o.get("mapX")==x && (Integer)o.get("mapY")==y)
+			if(o.getClass()==PlayerSeal.class && (Integer)o.get("mapX")==x && (Integer)o.get("mapY")==y)
 				return false;
 		return true;
 	}
+	
+	private void eatFish(int x,int y) {
+
+		for(GameObject o : characters) {
+			if(o.getClass()==Fish.class && (Integer)o.get("mapX")==x && (Integer)o.get("mapY")==y) {
+				o.send("eaten");
+				fishCount+=1;
+				preRemoveObject(o);
+				break;
+			}
+		}
+	}
+	
+	
+	//// private (data control)
+	
+	private void preRemoveObject(GameObject o) {
+		o.restoreData();
+		removed.add(o);
+	}
+
+
+
+
 
 }
