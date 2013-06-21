@@ -51,18 +51,16 @@ public class GameStage extends GameObject {
 	private String[] tileString;
 	private String[] charString;
 	private int mapWidth,mapHeight;
+
+	// camera
+	private float cameraX,cameraY;
+
+	// objects
 	private ArrayList<GameObject> tiles;
 	private ArrayList<GameObject> characters;
-	private float cameraX,cameraY;
-	
-	// character (also exist in 'characters')
-	private PlayerSeal player;
-	
-	// field
-	SampleField field;
-	
-	// user interface
-	Joystick stick;
+	private SampleField field;
+	private Joystick stick;
+	private PlayerSeal player;	// also exists in 'characters'
 	
 	public GameStage(Communicable con) {
 		super(con);
@@ -122,8 +120,6 @@ public class GameStage extends GameObject {
 			o.playGame(ms);
 		field.playGame(ms);
 		stick.playGame(ms);
-		
-		// camera point setting
 		regulateCamera(player);
 	}
 
