@@ -19,6 +19,7 @@ import com.yad.harpseal.gameobj.character.PlayerSeal;
 import com.yad.harpseal.gameobj.tile.NormalTile;
 import com.yad.harpseal.gameobj.tile.RotatableTile;
 import com.yad.harpseal.gameobj.window.Joystick;
+import com.yad.harpseal.gameobj.window.ScoreCounter;
 import com.yad.harpseal.util.Communicable;
 import com.yad.harpseal.util.Func;
 import com.yad.harpseal.util.HarpEvent;
@@ -65,6 +66,7 @@ public class GameStage extends GameObject {
 	private SampleField field;
 	private Joystick stick;
 	private PlayerSeal player;	// also exists in 'characters'
+	private ScoreCounter counter;
 	
 	// score data
 	private int stepCount;
@@ -82,6 +84,7 @@ public class GameStage extends GameObject {
 		field=new SampleField(this);
 		stick=new Joystick(this);
 		player=null;
+		counter=new ScoreCounter(this);
 		
 		// map vaildity check... later
 		tileString=tileSample;
@@ -141,6 +144,8 @@ public class GameStage extends GameObject {
 			o.playGame(ms);
 		field.playGame(ms);
 		stick.playGame(ms);
+		counter.playGame(ms);
+		
 		regulateCamera(player);
 		tiles.remove(removed.peek());
 		characters.remove(removed.poll());
@@ -164,6 +169,8 @@ public class GameStage extends GameObject {
 		field.receiveMotion(ev, layer);
 		if(ev.isProcessed()) return;
 		stick.receiveMotion(ev, layer);
+		if(ev.isProcessed()) return;
+		counter.receiveMotion(ev, layer);
 	}
 
 	@Override
@@ -179,6 +186,7 @@ public class GameStage extends GameObject {
 			o.drawScreen(c, p, layer);
 		field.drawScreen(c, p, layer);
 		stick.drawScreen(c, p, layer);
+		counter.drawScreen(c, p, layer);
 	}
 
 	@Override
@@ -189,7 +197,7 @@ public class GameStage extends GameObject {
 			o.restoreData();
 		field.restoreData();
 		stick.restoreData();
-		player=null;
+		counter.restoreData();
 	}
 
 	@Override
@@ -225,6 +233,8 @@ public class GameStage extends GameObject {
 			return stepCount;
 		else if(name.equals("fishCount"))
 			return fishCount;
+		else if(name.equals("fishMax"))
+			return FISH_MAX;
 		else
 			return con.get(name);
 	}
