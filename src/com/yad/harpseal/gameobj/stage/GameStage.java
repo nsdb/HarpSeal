@@ -62,8 +62,19 @@ public class GameStage extends GameObject {
 	private Joystick stick;
 	private PlayerSeal player;	// also exists in 'characters'
 	
+	// score data
+	private int stepCount;
+	private int fishCount;
+	private final static int FISH_MAX=3;
+	
+	
+	//// public method
+	
+	
 	public GameStage(Communicable con) {
 		super(con);
+		
+		// user interface, etc.
 		field=new SampleField(this);
 		stick=new Joystick(this);
 		player=null;
@@ -110,6 +121,10 @@ public class GameStage extends GameObject {
 		cameraX=0;
 		cameraY=0;
 		regulateCamera(player);
+		
+		// score data init
+		stepCount=0;
+		fishCount=0;
 	}
 
 	@Override
@@ -191,8 +206,17 @@ public class GameStage extends GameObject {
 
 	@Override
 	public Object get(String name) {
-		return con.get(name);
+		if(name.equals("stepCount"))
+			return stepCount;
+		else if(name.equals("fishCount"))
+			return fishCount;
+		else
+			return con.get(name);
 	}
+	
+	
+	//// private method
+	
 	
 	private void regulateCamera(GameObject target) {
 		
