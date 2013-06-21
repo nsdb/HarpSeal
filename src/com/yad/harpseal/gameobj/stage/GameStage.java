@@ -334,6 +334,8 @@ public class GameStage extends GameObject {
 			if(o.getClass()==Fish.class && (Integer)o.get("mapX")==x && (Integer)o.get("mapY")==y) {
 				o.send("eaten");
 				fishCount+=1;
+				if(fishCount>FISH_MAX)
+					HarpLog.danger("FishCount value is more than FISH_MAX value!");
 				preRemoveObject(o);
 				break;
 			}
