@@ -16,6 +16,7 @@ import com.yad.harpseal.gameobj.SampleField;
 import com.yad.harpseal.gameobj.character.Fish;
 import com.yad.harpseal.gameobj.character.GoalFlag;
 import com.yad.harpseal.gameobj.character.PlayerSeal;
+import com.yad.harpseal.gameobj.tile.BrakingTile;
 import com.yad.harpseal.gameobj.tile.NormalTile;
 import com.yad.harpseal.gameobj.tile.RotatableTile;
 import com.yad.harpseal.gameobj.window.Joystick;
@@ -31,11 +32,11 @@ public class GameStage extends GameObject {
 	private final static String[] tileSample= {
 		"11252234",
 		"41342235",
-		"51114123",
-		"01423234",
-		"01511132",
-		"02341551",
-		"13231212",
+		"51614123",
+		"01423634",
+		"01511632",
+		"02346551",
+		"13236262",
 		"31213112",
 		"02314541",
 	};
@@ -108,6 +109,7 @@ public class GameStage extends GameObject {
 				case '3': tiles.add(new RotatableTile(this,x,y,TileType.RT_CORNER)); break;
 				case '4': tiles.add(new RotatableTile(this,x,y,TileType.RT_FORK)); break;
 				case '5': tiles.add(new RotatableTile(this,x,y,TileType.RT_INTERSECTION)); break;
+				case '6': tiles.add(new BrakingTile(this,x,y)); break;
 				default: HarpLog.danger("Invalid tile type"); break;
 				}
 				
@@ -208,6 +210,7 @@ public class GameStage extends GameObject {
 
 			if(player==null) return 0;
 			else if(movableCheck(player,Integer.parseInt(msgs[1]))==true) {
+				breakTileStart( (Integer)player.get("mapX"), (Integer)player.get("mapY") );
 				player.send("move/"+msgs[1]);
 				return 1;
 			} else return 0;
@@ -222,6 +225,9 @@ public class GameStage extends GameObject {
 				stepCount+=1;
 				eatFish(Integer.parseInt(msgs[2]), Integer.parseInt(msgs[3]));
 			}
+			return 1;
+		} else if(msgs[0].equals("broken")) {
+			breakTileEnd( Integer.parseInt(msgs[1]), Integer.parseInt(msgs[2]) );
 			return 1;
 		}
 		return con.send(msg);
@@ -272,6 +278,9 @@ public class GameStage extends GameObject {
 	
 	private boolean movableCheck(GameObject target,int direction) {
 		
+		// action check
+		if((Integer)target.get("moveDirection")!=Direction.NONE) return false;
+		
 		// start point check
 		int mapX=(Integer)target.get("mapX");
 		int mapY=(Integer)target.get("mapY");
@@ -293,6 +302,9 @@ public class GameStage extends GameObject {
 					case TileType.RT_INTERSECTION: break;
 					default: HarpLog.error("Invalid Tile Type : "+tileType); return false;
 					}
+				} else if(o.getClass()==BrakingTile.class) {
+					if((Boolean)o.get("braking")==true) return false;
+					else break;
 				}
 			}
 		}
@@ -323,6 +335,8 @@ public class GameStage extends GameObject {
 					case TileType.RT_INTERSECTION: return true;
 					default: HarpLog.error("Invalid Tile Type : "+tileType); return false;
 					}
+				} else if(o.getClass()==BrakingTile.class) {
+					return (Boolean)o.get("braking")==false;
 				}
 				
 			}
@@ -346,6 +360,27 @@ public class GameStage extends GameObject {
 				fishCount+=1;
 				if(fishCount>FISH_MAX)
 					HarpLog.danger("FishCount value is more than FISH_MAX value!");
+				preRemoveObject(o);
+				break;
+			}
+		}
+	}
+	
+	private void breakTileStart(int x,int y) {
+		
+		for(GameObject o : tiles) {
+			if(o.getClass()==BrakingTile.class && (Integer)o.get("mapX")==x && (Integer)o.get("mapY")==y) {
+				o.send("break");
+				break;
+			}
+		}
+		
+	}
+	
+	private void breakTileEnd(int x,int y) {
+		
+		for(GameObject o : tiles) {
+			if(o.getClass()==BrakingTile.class && (Integer)o.get("mapX")==x && (Integer)o.get("mapY")==y) {
 				preRemoveObject(o);
 				break;
 			}
