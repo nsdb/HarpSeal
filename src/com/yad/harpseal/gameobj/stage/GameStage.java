@@ -31,19 +31,19 @@ public class GameStage extends GameObject {
 	// sample map structure
 	private final static String[] tileSample= {
 		"11252234",
-		"41342235",
-		"51614123",
+		"41346235",
+		"56664123",
 		"01423634",
-		"01511632",
+		"01561632",
 		"02346551",
 		"13236262",
-		"31213112",
-		"02314541",
+		"31216112",
+		"02314641",
 	};
 	private final static String[] charSample= {
-		"13000000",
+		"10000000",
 		"00000000",
-		"00000000",
+		"03000000",
 		"00000000",
 		"00000000",
 		"00000000",
