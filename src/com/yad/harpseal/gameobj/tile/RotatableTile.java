@@ -44,8 +44,10 @@ public class RotatableTile extends NormalTile {
 		int pointX=(int)(ev.getX()-Screen.FIELD_MARGIN_LEFT)/Screen.TILE_LENGTH;
 		int pointY=(int)(ev.getY()-Screen.FIELD_MARGIN_TOP)/Screen.TILE_LENGTH;
 		if(pointX==mapX && pointY==mapY) {
-			if(con.send("rotatableCheck/"+mapX+"/"+mapY)==1)
+			if(con.send("rotatableCheck/"+mapX+"/"+mapY)==1) {
 				direction=Direction.clockwise(direction);
+				ev.process();
+			}
 		}
 	}
 

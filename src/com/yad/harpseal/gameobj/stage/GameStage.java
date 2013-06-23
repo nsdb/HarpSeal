@@ -59,6 +59,11 @@ public class GameStage extends GameObject {
 
 	// camera
 	private float cameraX,cameraY;
+	private int cameraMode;
+	private GameObject cameraTarget;
+	private final static int CAM_MENUAL=1;
+	private final static int CAM_TARGET=2;
+	private final static float TARGET_MOTION_MIN=0.1f;
 
 	// objects
 	private ArrayList<GameObject> tiles;
@@ -130,7 +135,9 @@ public class GameStage extends GameObject {
 		// camera point init
 		cameraX=0;
 		cameraY=0;
-		regulateCamera(player);
+		cameraMode=CAM_TARGET;
+		cameraTarget=player;
+		regulateCamera();
 		
 		// score data init
 		stepCount=0;
@@ -147,7 +154,7 @@ public class GameStage extends GameObject {
 		stick.playGame(ms);
 		counter.playGame(ms);
 		
-		regulateCamera(player);
+		regulateCamera();
 		tiles.remove(removed.peek());
 		characters.remove(removed.poll());
 	}
@@ -228,6 +235,10 @@ public class GameStage extends GameObject {
 		} else if(msgs[0].equals("broken")) {
 			breakTileEnd( Integer.parseInt(msgs[1]), Integer.parseInt(msgs[2]) );
 			return 1;
+		} else if(msgs[0].equals("scroll")) {
+			cameraX+=Float.parseFloat(msgs[1]);
+			cameraY+=Float.parseFloat(msgs[2]);
+			return 1;
 		}
 		return con.send(msg);
 	}
@@ -248,31 +259,42 @@ public class GameStage extends GameObject {
 	//// private method (game play)
 	
 	
-	private void regulateCamera(GameObject target) {
+	private void regulateCamera() {
 		
-		if(target == null) return;
+		switch(cameraMode) {
 		
-		// whole character
-		cameraX=(Integer)target.get("mapX")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_LEFT-Screen.SCREEN_X/2;
-		cameraY=(Integer)target.get("mapY")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_TOP-Screen.SCREEN_Y/2;
+		case CAM_MENUAL:
+			cameraX=Func.limit(cameraX, 0, mapWidth*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_LEFT*2-Screen.SCREEN_X);
+			cameraY=Func.limit(cameraY, 0,  mapHeight*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_TOP*2-Screen.SCREEN_Y);
+			break;
 		
-		// player seal (movable character)
-		if(target.getClass()==PlayerSeal.class) {
-			int pDirection=(Integer)target.get("moveDirection");
-			if(pDirection!=Direction.NONE) {
-				float value=(float)Screen.TILE_LENGTH*(Integer)target.get("moveTime")/(Integer)target.get("moveValue")-Screen.TILE_LENGTH;
-				switch(pDirection) {
-				case Direction.LEFT: cameraX-=value; break;
-				case Direction.RIGHT: cameraX+=value; break;
-				case Direction.UP: cameraY-=value; break;
-				case Direction.DOWN: cameraY+=value; break;
+		case CAM_TARGET:
+			if(cameraTarget == null) return;
+			else {
+				float targetX=(Integer)cameraTarget.get("mapX")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_LEFT-Screen.SCREEN_X/2;
+				float targetY=(Integer)cameraTarget.get("mapY")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_TOP-Screen.SCREEN_Y/2;
+				targetX=Func.limit(targetX, 0, mapWidth*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_LEFT*2-Screen.SCREEN_X);
+				targetY=Func.limit(targetY, 0,  mapHeight*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_TOP*2-Screen.SCREEN_Y);
+				
+				if(targetX!=cameraX) {
+					float moveX=(targetX-cameraX)*0.1f;
+					if(Math.abs(moveX)<=TARGET_MOTION_MIN) cameraX=targetX;
+					else cameraX+=moveX;
+				}
+				if(targetY!=cameraY) {
+					float moveY=(targetY-cameraY)*0.1f;
+					if(Math.abs(moveY)<=TARGET_MOTION_MIN) cameraY=targetY;
+					else cameraY+=moveY;
+				}
+				if(targetX==cameraX && targetY==cameraY) {
+					cameraMode=CAM_MENUAL;
+					cameraTarget=null;
+					HarpLog.info("Camera mode change : "+cameraMode);
 				}
 			}
-		}
+			break;
 		
-		// limit
-		cameraX=Func.limit(cameraX, 0, mapWidth*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_LEFT*2-Screen.SCREEN_X);
-		cameraY=Func.limit(cameraY, 0,  mapHeight*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_TOP*2-Screen.SCREEN_Y);
+		}		
 	}
 	
 	private boolean movableCheck(GameObject target,int direction) {

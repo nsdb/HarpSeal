@@ -67,7 +67,19 @@ public class HarpEvent {
 			HarpLog.danger("Event is already processed");
 		}
 		return y+cameraY;
-	}	
+	}
+	public float getOriginalX() {
+		if(processed) {
+			HarpLog.danger("Event is already processed");
+		}
+		return x;
+	}
+	public float getOriginalY() {
+		if(processed) {
+			HarpLog.danger("Event is already processed");
+		}
+		return y;
+	}
 	public boolean isProcessed() { return processed; }
 
 }

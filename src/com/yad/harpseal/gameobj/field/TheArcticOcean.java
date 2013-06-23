@@ -14,10 +14,14 @@ public class TheArcticOcean extends GameObject {
 	
 	private int mapWidth,mapHeight;
 
+	private boolean scrolling;
+	private float scrollX,scrollY;
+
 	public TheArcticOcean(Communicable con, int mapWidth, int mapHeight) {
 		super(con);
 		this.mapWidth=mapWidth;
 		this.mapHeight=mapHeight;
+		this.scrolling=false;
 		con.send("playSound/"+R.raw.sample_bgm);
 	}
 
@@ -26,7 +30,30 @@ public class TheArcticOcean extends GameObject {
 	}
 
 	@Override
-	public void receiveMotion(HarpEvent ev, int layer) {		
+	public void receiveMotion(HarpEvent ev, int layer) {
+		if(layer != Layer.LAYER_FIELD) return;
+		
+		switch(ev.getType()) {
+		case HarpEvent.MOTION_DOWN:
+			scrolling=true;
+			scrollX=ev.getOriginalX();
+			scrollY=ev.getOriginalY();
+			ev.process();
+			break;
+		case HarpEvent.MOTION_DRAG:
+			if(scrolling) {
+				con.send( "scroll/"+(scrollX-ev.getOriginalX())+"/"+(scrollY-ev.getOriginalY()) );
+				scrollX=ev.getOriginalX();
+				scrollY=ev.getOriginalY();
+				ev.process();
+			}
+			break;
+		case HarpEvent.MOTION_UP:
+			scrolling=false;
+			ev.process();
+			break;
+			
+		}
 	}
 
 	@Override
@@ -46,19 +73,15 @@ public class TheArcticOcean extends GameObject {
 
 	@Override
 	public void restoreData() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public int send(String msg) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public Object get(String name) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
