@@ -236,9 +236,12 @@ public class GameStage extends GameObject {
 			breakTileEnd( Integer.parseInt(msgs[1]), Integer.parseInt(msgs[2]) );
 			return 1;
 		} else if(msgs[0].equals("scroll")) {
-			cameraX+=Float.parseFloat(msgs[1]);
-			cameraY+=Float.parseFloat(msgs[2]);
-			return 1;
+			if(cameraMode==CAM_MENUAL) {
+				cameraX+=Float.parseFloat(msgs[1]);
+				cameraY+=Float.parseFloat(msgs[2]);
+				regulateCamera();
+				return 1;
+			} else return 0;
 		}
 		return con.send(msg);
 	}
