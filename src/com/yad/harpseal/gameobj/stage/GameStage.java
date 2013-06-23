@@ -63,7 +63,8 @@ public class GameStage extends GameObject {
 	private float targetX,targetY;
 	private final static int CAM_MENUAL=1;
 	private final static int CAM_TARGET=2;
-	private final static float TARGET_MOTION_MIN=0.1f;
+	private final static float TARGET_MOTION_MIN=1f;
+	private final static float TARGET_MOTION_SPD=0.075f;
 
 	// objects
 	private ArrayList<GameObject> tiles;
@@ -276,15 +277,24 @@ public class GameStage extends GameObject {
 			break;
 		
 		case CAM_TARGET:
-			if(targetX!=cameraX) {
-				float moveX=(targetX-cameraX)*0.1f;
-				if(Math.abs(moveX)<=TARGET_MOTION_MIN) cameraX=targetX;
-				else cameraX+=moveX;
-			}
-			if(targetY!=cameraY) {
-				float moveY=(targetY-cameraY)*0.1f;
-				if(Math.abs(moveY)<=TARGET_MOTION_MIN) cameraY=targetY;
-				else cameraY+=moveY;
+			if(targetX!=cameraX || targetY!=cameraY) {
+				float moveX=(targetX-cameraX)*TARGET_MOTION_SPD;
+				float moveY=(targetY-cameraY)*TARGET_MOTION_SPD;
+				float minPer=Func.distan(0, 0, moveX, moveY)/TARGET_MOTION_MIN;
+
+				if(minPer<1) {
+					moveX/=minPer;
+					moveY/=minPer;
+				}
+				
+				if(Func.distan(targetX,targetY,cameraX,cameraY)<TARGET_MOTION_MIN) {
+					cameraX=targetX;
+					cameraY=targetY;
+				}
+				else {
+					cameraX+=moveX;
+					cameraY+=moveY;
+				}
 			}
 			if(targetX==cameraX && targetY==cameraY) {
 				cameraMode=CAM_MENUAL;
