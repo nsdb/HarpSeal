@@ -60,7 +60,7 @@ public class GameStage extends GameObject {
 	// camera
 	private float cameraX,cameraY;
 	private int cameraMode;
-	private GameObject cameraTarget;
+	private float targetX,targetY;
 	private final static int CAM_MENUAL=1;
 	private final static int CAM_TARGET=2;
 	private final static float TARGET_MOTION_MIN=0.1f;
@@ -135,8 +135,10 @@ public class GameStage extends GameObject {
 		// camera point init
 		cameraX=0;
 		cameraY=0;
-		cameraMode=CAM_TARGET;
-		cameraTarget=player;
+		cameraMode=CAM_MENUAL;
+		targetX=0;
+		targetY=0;
+		setCameraTarget(player);
 		regulateCamera();
 		
 		// score data init
@@ -218,6 +220,8 @@ public class GameStage extends GameObject {
 			else if(movableCheck(player,Integer.parseInt(msgs[1]))==true) {
 				breakTileStart( (Integer)player.get("mapX"), (Integer)player.get("mapY") );
 				player.send("move/"+msgs[1]);
+				if(isTargetSeen(player)==false)
+					setCameraTarget(player);
 				return 1;
 			} else return 0;
 		}
@@ -272,32 +276,42 @@ public class GameStage extends GameObject {
 			break;
 		
 		case CAM_TARGET:
-			if(cameraTarget == null) return;
-			else {
-				float targetX=(Integer)cameraTarget.get("mapX")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_LEFT-Screen.SCREEN_X/2;
-				float targetY=(Integer)cameraTarget.get("mapY")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_TOP-Screen.SCREEN_Y/2;
-				targetX=Func.limit(targetX, 0, mapWidth*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_LEFT*2-Screen.SCREEN_X);
-				targetY=Func.limit(targetY, 0,  mapHeight*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_TOP*2-Screen.SCREEN_Y);
-				
-				if(targetX!=cameraX) {
-					float moveX=(targetX-cameraX)*0.1f;
-					if(Math.abs(moveX)<=TARGET_MOTION_MIN) cameraX=targetX;
-					else cameraX+=moveX;
-				}
-				if(targetY!=cameraY) {
-					float moveY=(targetY-cameraY)*0.1f;
-					if(Math.abs(moveY)<=TARGET_MOTION_MIN) cameraY=targetY;
-					else cameraY+=moveY;
-				}
-				if(targetX==cameraX && targetY==cameraY) {
-					cameraMode=CAM_MENUAL;
-					cameraTarget=null;
-					HarpLog.info("Camera mode change : "+cameraMode);
-				}
+			if(targetX!=cameraX) {
+				float moveX=(targetX-cameraX)*0.1f;
+				if(Math.abs(moveX)<=TARGET_MOTION_MIN) cameraX=targetX;
+				else cameraX+=moveX;
+			}
+			if(targetY!=cameraY) {
+				float moveY=(targetY-cameraY)*0.1f;
+				if(Math.abs(moveY)<=TARGET_MOTION_MIN) cameraY=targetY;
+				else cameraY+=moveY;
+			}
+			if(targetX==cameraX && targetY==cameraY) {
+				cameraMode=CAM_MENUAL;
+				HarpLog.info("Camera mode change : "+cameraMode);
 			}
 			break;
 		
 		}		
+	}
+	
+	private void setCameraTarget(GameObject target) {
+		
+		if(target != null) {
+			cameraMode=CAM_TARGET;
+			targetX=(Integer)target.get("mapX")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_LEFT-Screen.SCREEN_X/2;
+			targetY=(Integer)target.get("mapY")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_TOP-Screen.SCREEN_Y/2;
+			targetX=Func.limit(targetX, 0, mapWidth*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_LEFT*2-Screen.SCREEN_X);
+			targetY=Func.limit(targetY, 0,  mapHeight*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_TOP*2-Screen.SCREEN_Y);
+			HarpLog.info("Camera mode change : "+cameraMode);
+		}
+	}
+	
+	private boolean isTargetSeen(GameObject target) {
+		float tx=(Integer)target.get("mapX")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_LEFT;
+		float ty=(Integer)target.get("mapY")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_TOP;
+		return !(tx < cameraX || tx > cameraX+Screen.SCREEN_X || ty < cameraY || ty > cameraY+Screen.SCREEN_Y);
+			
 	}
 	
 	private boolean movableCheck(GameObject target,int direction) {
