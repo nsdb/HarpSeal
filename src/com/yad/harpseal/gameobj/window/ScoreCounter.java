@@ -18,8 +18,8 @@ public class ScoreCounter extends GameObject {
 	private Drawable step,fish;
 	private int stepCount,fishCount,fishMax;
 	
-	private final static int MARGIN_TOP=30;
-	private final static int MARGIN_LEFT=30;
+	private final static int MARGIN_TOP=10;
+	private final static int MARGIN_LEFT=10;
 	private final static int MARGIN_IN=15;
 	private final static int MARGIN_IN2=30;
 	private final static int IMAGE_SIZE=70;

@@ -12,10 +12,10 @@ import com.yad.harpseal.constant.Layer;
 import com.yad.harpseal.constant.Screen;
 import com.yad.harpseal.constant.TileType;
 import com.yad.harpseal.gameobj.GameObject;
-import com.yad.harpseal.gameobj.SampleField;
 import com.yad.harpseal.gameobj.character.Fish;
 import com.yad.harpseal.gameobj.character.GoalFlag;
 import com.yad.harpseal.gameobj.character.PlayerSeal;
+import com.yad.harpseal.gameobj.field.TheArcticOcean;
 import com.yad.harpseal.gameobj.tile.BrakingTile;
 import com.yad.harpseal.gameobj.tile.NormalTile;
 import com.yad.harpseal.gameobj.tile.RotatableTile;
@@ -64,7 +64,7 @@ public class GameStage extends GameObject {
 	private ArrayList<GameObject> tiles;
 	private ArrayList<GameObject> characters;
 	private Queue<GameObject> removed;
-	private SampleField field;
+	private TheArcticOcean field;
 	private Joystick stick;
 	private PlayerSeal player;	// also exists in 'characters'
 	private ScoreCounter counter;
@@ -80,12 +80,6 @@ public class GameStage extends GameObject {
 	
 	public GameStage(Communicable con) {
 		super(con);
-		
-		// user interface, etc.
-		field=new SampleField(this);
-		stick=new Joystick(this);
-		player=null;
-		counter=new ScoreCounter(this);
 		
 		// map vaildity check... later
 		tileString=tileSample;
@@ -127,6 +121,11 @@ public class GameStage extends GameObject {
 				}
 			}
 		}
+		
+		// user interface, etc.
+		field=new TheArcticOcean(this, mapWidth, mapHeight);
+		stick=new Joystick(this);
+		counter=new ScoreCounter(this);
 		
 		// camera point init
 		cameraX=0;
@@ -179,7 +178,7 @@ public class GameStage extends GameObject {
 	public void drawScreen(Canvas c, Paint p, int layer) {
 		
 		// camera setting
-		if(layer==Layer.LAYER_TILE) c.translate(-cameraX,-cameraY);
+		if(layer==Layer.LAYER_FIELD) c.translate(-cameraX,-cameraY);
 		else if(layer==Layer.LAYER_WINDOW) c.translate(cameraX,cameraY);
 		
 		for(GameObject o : tiles)
