@@ -5,36 +5,52 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.SurfaceHolder;
 
+import com.yad.harpseal.gameobj.GameObject;
 import com.yad.harpseal.gameobj.stage.GameStage;
+import com.yad.harpseal.gameobj.stage.MainStage;
 import com.yad.harpseal.util.HarpEvent;
 
 public class GameController extends GameControllerBase {
 
-	GameStage main;
+	GameObject stage;
 
 	public GameController(Context context,SurfaceHolder holder) {
 		super(context,holder);
-		main=new GameStage(this);
+		stage=new MainStage(this);
 	}
 
 	@Override
 	public void playGame(int ms) {
-		main.playGame(ms);
+		stage.playGame(ms);
 	}
 
 	@Override
 	public void receiveMotion(HarpEvent ev, int layer) {
-		main.receiveMotion(ev, layer);
+		stage.receiveMotion(ev, layer);
 	}
 
 	@Override
 	public void drawScreen(Canvas c, Paint p, int layer) {
-		main.drawScreen(c, p, layer);
+		stage.drawScreen(c, p, layer);
 	}
 
 	@Override
 	public void restoreData() {
-		main.restoreData();
+		stage.restoreData();
+	}
+	
+	@Override
+	public int send(String msg) {
+		String[] msgs=msg.split("/");
+
+		if(msgs[0].equals("gameStart")) {
+			stage.restoreData();
+			stage=null;
+			stage=new GameStage(this,Integer.parseInt(msgs[1]),Integer.parseInt(msgs[2]));
+			return 1;
+		}
+		else return super.send(msg);
+		
 	}
 
 }

@@ -53,6 +53,7 @@ public class GameStage extends GameObject {
 	};
 	
 	// map
+	private int stageGroup,stageNumber;
 	private String[] tileString;
 	private String[] charString;
 	private int mapWidth,mapHeight;
@@ -84,10 +85,12 @@ public class GameStage extends GameObject {
 	//// public method
 	
 	
-	public GameStage(Communicable con) {
+	public GameStage(Communicable con, int stageGroup, int stageNumber) {
 		super(con);
 		
 		// map vaildity check... later
+		this.stageGroup=stageGroup;
+		this.stageNumber=stageNumber;
 		tileString=tileSample;
 		charString=charSample;
 		////
