@@ -49,6 +49,12 @@ public class GameController extends GameControllerBase {
 			stage=new GameStage(this,Integer.parseInt(msgs[1]),Integer.parseInt(msgs[2]));
 			return 1;
 		}
+		else if(msgs[0].equals("gameEnd")) {
+			stage.restoreData();
+			stage=null;
+			stage=new MainStage(this);
+			return 1;
+		}
 		else return super.send(msg);
 		
 	}

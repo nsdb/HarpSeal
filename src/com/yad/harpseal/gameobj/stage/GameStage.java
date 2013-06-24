@@ -238,6 +238,8 @@ public class GameStage extends GameObject {
 			if(msgs[1].equals("PlayerSeal")) {
 				stepCount+=1;
 				eatFish(Integer.parseInt(msgs[2]), Integer.parseInt(msgs[3]));
+				if(goalCheck(Integer.parseInt(msgs[2]), Integer.parseInt(msgs[3]))==true)
+					con.send("gameEnd");
 			}
 			return 1;
 		} else if(msgs[0].equals("broken")) {
@@ -415,6 +417,16 @@ public class GameStage extends GameObject {
 				break;
 			}
 		}
+	}
+	
+	private boolean goalCheck(int x,int y) {
+		
+		for(GameObject o : characters) {
+			if(o.getClass()==GoalFlag.class && (Integer)o.get("mapX")==x && (Integer)o.get("mapY")==y) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private void breakTileStart(int x,int y) {

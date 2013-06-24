@@ -41,6 +41,11 @@ public class MainStage extends GameObject {
 		p.setColor(0xFFFFFFFF);
 		c.drawText("잠시 후 게임 화면으로 이동합니다", Screen.SCREEN_X/2, Screen.SCREEN_Y/2+15, p);
 
+		if(time<500) {
+			int alpha=Math.round( (float)(500-time)/500*0xFF ) << 24;
+			p.setColor( alpha | 0x000000 );
+			c.drawRect(0,0,Screen.SCREEN_X,Screen.SCREEN_Y,p);
+		}
 		if(time>2500) {
 			int alpha=Math.round( (float)(time-2500)/500*0xFF ) << 24;
 			p.setColor( alpha | 0xFFFFFF );
