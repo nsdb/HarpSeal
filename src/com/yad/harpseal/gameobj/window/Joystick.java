@@ -20,8 +20,9 @@ public class Joystick extends GameObject {
 
 	private final static int PAD_MARGIN=20;
 	private final static int PAD_RADIUS=75;
+	private final static int RANGE_GRAB=100;
 	private final static int RANGE_ACTIVE=50;
-	private final static int RANGE_MAX=60;
+	private final static int RANGE_MAX=70;
 	private final static int STICK_RADIUS=60;
 	
 	public Joystick(Communicable con) {
@@ -48,7 +49,7 @@ public class Joystick extends GameObject {
 		// grab and stick point check
 		switch(ev.getType()) {
 		case HarpEvent.MOTION_DOWN:
-			if(distance<=STICK_RADIUS) {
+			if(distance<=RANGE_GRAB) {
 				grabbed=true;
 				stickX=ev.getX()-padX;
 				stickY=ev.getY()-padY;
