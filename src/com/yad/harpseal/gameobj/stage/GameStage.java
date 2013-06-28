@@ -224,7 +224,7 @@ public class GameStage extends GameObject {
 			else if(movableCheck(player,Integer.parseInt(msgs[1]))==true) {
 				breakTileStart( (Integer)player.get("mapX"), (Integer)player.get("mapY") );
 				player.send("move/"+msgs[1]);
-				if(isTargetSeen(player)==false)
+				if(autoCameraRegulateCheck(player))
 					setCameraTarget(player);
 				return 1;
 			} else return 0;
@@ -322,10 +322,11 @@ public class GameStage extends GameObject {
 		}
 	}
 	
-	private boolean isTargetSeen(GameObject target) {
+	private boolean autoCameraRegulateCheck(GameObject target) {
 		float tx=(Integer)target.get("mapX")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_LEFT;
 		float ty=(Integer)target.get("mapY")*Screen.TILE_LENGTH+Screen.TILE_LENGTH/2+Screen.FIELD_MARGIN_TOP;
-		return !(tx < cameraX || tx > cameraX+Screen.SCREEN_X || ty < cameraY || ty > cameraY+Screen.SCREEN_Y);
+		return (tx < cameraX+Screen.TILE_LENGTH || tx > cameraX+Screen.SCREEN_X-Screen.TILE_LENGTH ||
+				ty < cameraY+Screen.TILE_LENGTH || ty > cameraY+Screen.SCREEN_Y-Screen.TILE_LENGTH);
 			
 	}
 	
