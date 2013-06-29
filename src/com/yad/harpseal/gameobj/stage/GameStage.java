@@ -165,7 +165,7 @@ public class GameStage extends GameObject {
 		counter.playGame(ms);
 		
 		// camera
-		regulateCamera();
+		regulateCamera(ms);
 		
 		// restore
 		tiles.remove(removed.peek());
@@ -280,8 +280,9 @@ public class GameStage extends GameObject {
 	
 	//// private method (game play)
 	
-	
-	private void regulateCamera() {
+	// In fact, something is wrong.. -_-
+	private void regulateCamera() { regulateCamera(0); }
+	private void regulateCamera(int ms) {
 		
 		switch(cameraMode) {
 		
@@ -291,17 +292,22 @@ public class GameStage extends GameObject {
 			break;
 		
 		case CAM_TARGET:
-			if(targetX!=cameraX || targetY!=cameraY) {
-				float moveX=(targetX-cameraX)*TARGET_MOTION_SPD;
-				float moveY=(targetY-cameraY)*TARGET_MOTION_SPD;
-				float minPer=Func.distan(0, 0, moveX, moveY)/TARGET_MOTION_MIN;
+			if(ms==0) {
+				cameraX=Func.limit(cameraX, 0, mapWidth*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_LEFT*2-Screen.SCREEN_X);
+				cameraY=Func.limit(cameraY, 0,  mapHeight*Screen.TILE_LENGTH+Screen.FIELD_MARGIN_TOP*2-Screen.SCREEN_Y);
+				break;				
+			}
+			else if(targetX!=cameraX || targetY!=cameraY) {
+				float moveX=(targetX-cameraX)*TARGET_MOTION_SPD*ms/15;
+				float moveY=(targetY-cameraY)*TARGET_MOTION_SPD*ms/15;
+				float minPer=Func.distan(0, 0, moveX, moveY)/TARGET_MOTION_MIN*ms/15;
 
 				if(minPer<1) {
 					moveX/=minPer;
 					moveY/=minPer;
 				}
 				
-				if(Func.distan(targetX,targetY,cameraX,cameraY)<TARGET_MOTION_MIN) {
+				if(Func.distan(targetX,targetY,cameraX,cameraY)<TARGET_MOTION_MIN*ms/15) {
 					cameraX=targetX;
 					cameraY=targetY;
 				}
