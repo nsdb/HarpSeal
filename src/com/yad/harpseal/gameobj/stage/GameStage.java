@@ -67,13 +67,15 @@ public class GameStage extends GameObject {
 	private final static float TARGET_MOTION_MIN=1f;
 	private final static float TARGET_MOTION_SPD=0.075f;
 
-	// objects
+	// tiles, characters
 	private ArrayList<GameObject> tiles;
 	private ArrayList<GameObject> characters;
 	private Queue<GameObject> removed;
+	private PlayerSeal player;	// also exists in 'characters', sometimes null.
+	
+	// field, user interfaces
 	private TheArcticOcean field;
 	private Joystick stick;
-	private PlayerSeal player;	// also exists in 'characters'
 	private ScoreCounter counter;
 	
 	// score data
@@ -152,6 +154,8 @@ public class GameStage extends GameObject {
 
 	@Override
 	public void playGame(int ms) {
+
+		// objects
 		for(GameObject o : tiles)
 			o.playGame(ms);
 		for(GameObject o : characters)
@@ -160,7 +164,10 @@ public class GameStage extends GameObject {
 		stick.playGame(ms);
 		counter.playGame(ms);
 		
+		// camera
 		regulateCamera();
+		
+		// restore
 		tiles.remove(removed.peek());
 		characters.remove(removed.poll());
 	}
@@ -168,10 +175,11 @@ public class GameStage extends GameObject {
 	@Override
 	public void receiveMotion(HarpEvent ev, int layer) {
 
-		// camera setting
+		// camera
 		if(layer==Layer.LAYER_FIELD) ev.setCamera(cameraX, cameraY);
 		else if(layer==Layer.LAYER_WINDOW) ev.setCamera(0, 0);
 		
+		// objects
 		for(GameObject o : tiles) {
 			o.receiveMotion(ev, layer);
 			if(ev.isProcessed()) return;
@@ -190,10 +198,11 @@ public class GameStage extends GameObject {
 	@Override
 	public void drawScreen(Canvas c, Paint p, int layer) {
 		
-		// camera setting
+		// camera
 		if(layer==Layer.LAYER_FIELD) c.translate(-cameraX,-cameraY);
 		else if(layer==Layer.LAYER_WINDOW) c.translate(cameraX,cameraY);
 		
+		// objects
 		for(GameObject o : tiles)
 			o.drawScreen(c, p, layer);
 		for(GameObject o : characters)
