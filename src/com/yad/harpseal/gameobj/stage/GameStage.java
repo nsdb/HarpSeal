@@ -1,9 +1,13 @@
 package com.yad.harpseal.gameobj.stage;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import android.content.res.AssetManager;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
@@ -28,32 +32,9 @@ import com.yad.harpseal.util.HarpLog;
 
 public class GameStage extends GameObject {
 	
-	// sample map structure
-	private final static String[] tileSample= {
-		"11252234",
-		"41346235",
-		"56664123",
-		"01423634",
-		"01561632",
-		"02346551",
-		"13236262",
-		"31216112",
-		"02314641",
-	};
-	private final static String[] charSample= {
-		"10000000",
-		"00000000",
-		"03000000",
-		"00000000",
-		"00000000",
-		"00000000",
-		"00030030",
-		"00000000",
-		"00000002"
-	};
-	
 	// map
-	private int stageGroup,stageNumber;
+	private final int stageGroup;
+	private final int stageNumber;
 	private String[] tileString;
 	private String[] charString;
 	private int mapWidth,mapHeight;
@@ -93,11 +74,10 @@ public class GameStage extends GameObject {
 		// map vaildity check... later
 		this.stageGroup=stageGroup;
 		this.stageNumber=stageNumber;
-		tileString=tileSample;
-		charString=charSample;
+		readMap();
 		////
 		
-		// read map
+		// build map
 		mapWidth=tileString[0].length();
 		mapHeight=tileString.length;
 		tiles=new ArrayList<GameObject>();
@@ -279,6 +259,60 @@ public class GameStage extends GameObject {
 	
 	
 	//// private method (game play)
+	
+	private void readMap() {
+
+		tileString=null;
+		charString=null;
+		AssetManager am=(AssetManager)con.get("assetManager");		
+		try {
+
+			// open file
+			InputStream is=am.open("stage"+stageGroup+".txt");
+			InputStreamReader isr=new InputStreamReader(is,"utf-8");
+			BufferedReader br=new BufferedReader(isr);
+			String str=null;
+			
+			// find map string matching stage number
+			str=br.readLine();
+			while(!str.equals("#"+stageNumber)) {
+				str=br.readLine();
+				if(str==null) break;
+			}
+			if(!str.equals("#"+stageNumber)) {
+				HarpLog.error("Failed to find map string matching stage number : "+stageGroup+", "+stageNumber);
+				return;
+			}
+			
+			// read map
+			mapWidth=Integer.parseInt( br.readLine() );
+			mapHeight=Integer.parseInt( br.readLine() );
+			tileString=new String[mapHeight];
+			for(int i=0;i<mapHeight;i++) {
+				str=br.readLine();
+				if(str.length() != mapWidth) {
+					HarpLog.error("File struct error - tileString : "+stageGroup+", "+stageNumber);
+					return;
+				}
+				tileString[i]=str;
+			}
+			charString=new String[mapHeight];
+			for(int i=0;i<mapHeight;i++) {
+				str=br.readLine();
+				if(str.length() != mapWidth) {
+					HarpLog.error("File struct error - charString : "+stageGroup+", "+stageNumber);
+					return;
+				}
+				charString[i]=str;				
+			}
+			HarpLog.info("Success read map! : "+stageGroup+", "+stageNumber);
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+			HarpLog.error("Failed to read map : "+stageGroup+", "+stageNumber);
+		}
+		
+	}
 	
 	// In fact, something is wrong.. -_-
 	private void regulateCamera() { regulateCamera(0); }

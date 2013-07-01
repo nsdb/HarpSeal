@@ -280,6 +280,8 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 	public Object get(String name) {
 		if(name.equals("resources"))
 			return context.getResources();
+		else if(name.equals("assetManager"))
+			return context.getAssets();
 		else {
 			HarpLog.error("Controller received invalid name of get() : "+name);
 			return null;			
