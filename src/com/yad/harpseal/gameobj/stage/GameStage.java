@@ -35,9 +35,9 @@ public class GameStage extends GameObject {
 	// map
 	private final int stageGroup;
 	private final int stageNumber;
+	private int mapWidth,mapHeight;
 	private String[] tileString;
 	private String[] charString;
-	private int mapWidth,mapHeight;
 
 	// camera
 	private float cameraX,cameraY;
@@ -71,47 +71,18 @@ public class GameStage extends GameObject {
 	public GameStage(Communicable con, int stageGroup, int stageNumber) {
 		super(con);
 		
-		// map vaildity check... later
+		// read map
 		this.stageGroup=stageGroup;
 		this.stageNumber=stageNumber;
 		readMap();
 		////
 		
 		// build map
-		mapWidth=tileString[0].length();
-		mapHeight=tileString.length;
 		tiles=new ArrayList<GameObject>();
 		characters=new ArrayList<GameObject>();
 		removed=new LinkedList<GameObject>();
-		for(int y=0;y<mapHeight;y++) {
-			for(int x=0;x<mapWidth;x++) {
-				
-				// create tiles
-				switch(tileString[y].charAt(x)) {
-				case '0': break;
-				case '1': tiles.add(new NormalTile(this,x,y)); break;
-				case '2': tiles.add(new RotatableTile(this,x,y,TileType.RT_BRIDGE)); break;
-				case '3': tiles.add(new RotatableTile(this,x,y,TileType.RT_CORNER)); break;
-				case '4': tiles.add(new RotatableTile(this,x,y,TileType.RT_FORK)); break;
-				case '5': tiles.add(new RotatableTile(this,x,y,TileType.RT_INTERSECTION)); break;
-				case '6': tiles.add(new BrakingTile(this,x,y)); break;
-				default: HarpLog.danger("Invalid tile type"); break;
-				}
-				
-				// create characters
-				switch(charString[y].charAt(x)) {
-				case '0': break;
-				case '1':
-					player=new PlayerSeal(this,x,y);
-					characters.add(player);
-					break;
-					
-				case '2': characters.add(new GoalFlag(this,x,y)); break;
-				case '3': characters.add(new Fish(this,x,y)); break;
-				default: HarpLog.danger("Invalid character type"); break;
-				}
-			}
-		}
+		buildMap();
+		////
 		
 		// user interface, etc.
 		field=new TheArcticOcean(this, mapWidth, mapHeight);
@@ -194,10 +165,7 @@ public class GameStage extends GameObject {
 
 	@Override
 	public void restoreData() {
-		for(GameObject o : tiles)
-			o.restoreData();
-		for(GameObject o : characters)
-			o.restoreData();
+		clearMap();
 		field.restoreData();
 		stick.restoreData();
 		counter.restoreData();
@@ -312,6 +280,48 @@ public class GameStage extends GameObject {
 			HarpLog.error("Failed to read map : "+stageGroup+", "+stageNumber);
 		}
 		
+	}
+	
+	private void buildMap() {		
+		for(int y=0;y<mapHeight;y++) {
+			for(int x=0;x<mapWidth;x++) {
+				
+				// create tiles
+				switch(tileString[y].charAt(x)) {
+				case '0': break;
+				case '1': tiles.add(new NormalTile(this,x,y)); break;
+				case '2': tiles.add(new RotatableTile(this,x,y,TileType.RT_BRIDGE)); break;
+				case '3': tiles.add(new RotatableTile(this,x,y,TileType.RT_CORNER)); break;
+				case '4': tiles.add(new RotatableTile(this,x,y,TileType.RT_FORK)); break;
+				case '5': tiles.add(new RotatableTile(this,x,y,TileType.RT_INTERSECTION)); break;
+				case '6': tiles.add(new BrakingTile(this,x,y)); break;
+				default: HarpLog.danger("Invalid tile type"); break;
+				}
+				
+				// create characters
+				switch(charString[y].charAt(x)) {
+				case '0': break;
+				case '1':
+					player=new PlayerSeal(this,x,y);
+					characters.add(player);
+					break;
+					
+				case '2': characters.add(new GoalFlag(this,x,y)); break;
+				case '3': characters.add(new Fish(this,x,y)); break;
+				default: HarpLog.danger("Invalid character type"); break;
+				}
+			}
+		}
+	}
+	
+	private void clearMap() {
+		
+		for(GameObject o : tiles)
+			o.restoreData();
+		for(GameObject o : characters)
+			o.restoreData();
+		tiles.clear();
+		characters.clear();
 	}
 	
 	// In fact, something is wrong.. -_-
