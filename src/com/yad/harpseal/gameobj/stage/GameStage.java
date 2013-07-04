@@ -59,6 +59,12 @@ public class GameStage extends GameObject {
 	private Joystick stick;
 	private ScoreCounter counter;
 	
+	// stage action
+	private int actionName;
+	private int actionTime;
+	private final static int ACT_STARTING_FADEOUT=1;
+	private final static int ACT_PLAYING=2;
+	
 	// score data
 	private int stepCount;
 	private int fishCount;
@@ -98,6 +104,10 @@ public class GameStage extends GameObject {
 		setCameraTarget(player);
 		regulateCamera();
 		
+		// stage init
+		actionName=ACT_STARTING_FADEOUT;
+		actionTime=0;
+		
 		// score data init
 		stepCount=0;
 		fishCount=0;
@@ -121,6 +131,13 @@ public class GameStage extends GameObject {
 		// restore
 		tiles.remove(removed.peek());
 		characters.remove(removed.poll());
+		
+		// controller
+		actionTime+=ms;
+		if(actionName==ACT_STARTING_FADEOUT && actionTime>=500) {
+			actionName=ACT_PLAYING;
+			actionTime=0;
+		}
 	}
 
 	@Override
@@ -161,6 +178,14 @@ public class GameStage extends GameObject {
 		field.drawScreen(c, p, layer);
 		stick.drawScreen(c, p, layer);
 		counter.drawScreen(c, p, layer);
+		
+		// controller
+		if(layer==Layer.LAYER_SCREEN && actionName==ACT_STARTING_FADEOUT) {
+			p.reset();
+			int alpha=Math.round( (float)(500-actionTime)/500*0xFF ) << 24;
+			p.setColor(alpha | 0xFFFFFF);
+			c.drawRect(c.getClipBounds(), p);
+		}
 	}
 
 	@Override
