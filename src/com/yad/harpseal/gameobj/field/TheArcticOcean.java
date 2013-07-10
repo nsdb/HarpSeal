@@ -73,6 +73,7 @@ public class TheArcticOcean extends GameObject {
 
 	@Override
 	public void restoreData() {
+		con.send("resetSound");
 	}
 
 	@Override

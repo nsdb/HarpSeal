@@ -190,7 +190,10 @@ public class GameStage extends GameObject {
 
 	@Override
 	public void restoreData() {
-		clearMap();
+		for(GameObject o : tiles)
+			o.restoreData();
+		for(GameObject o : characters)
+			o.restoreData();
 		field.restoreData();
 		stick.restoreData();
 		counter.restoreData();
