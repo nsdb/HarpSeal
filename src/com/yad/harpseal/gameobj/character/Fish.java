@@ -56,7 +56,12 @@ public class Fish extends GameObject {
 
 	@Override
 	public int send(String msg) {
-		return 0;
+		String[] msgs=msg.split("/");
+		
+		if(msgs[0].equals("eaten")) {
+			return 1;
+		}
+		else return 0;
 	}
 
 	@Override
