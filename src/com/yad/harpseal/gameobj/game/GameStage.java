@@ -23,6 +23,7 @@ public class GameStage extends GameObject {
 	private GameCamera camera;
 	private Joystick stick;
 	private ScoreCounter counter;
+	private PauseBtn pause;
 	
 	// stage action
 	private int actionName;
@@ -48,6 +49,7 @@ public class GameStage extends GameObject {
 				(Integer)map.get("playerX"), (Integer)map.get("playerY") );
 		stick=new Joystick(this);
 		counter=new ScoreCounter(this);
+		pause=new PauseBtn(this);
 		
 		// stage action
 		actionName=ACT_STARTING_FADEOUT;
@@ -62,6 +64,7 @@ public class GameStage extends GameObject {
 		camera.playGame(ms);
 		stick.playGame(ms);
 		counter.playGame(ms);
+		pause.playGame(ms);
 		
 		// controller
 		actionTime+=ms;
@@ -90,6 +93,8 @@ public class GameStage extends GameObject {
 		stick.receiveMotion(ev, layer);
 		if(ev.isProcessed()) return;
 		counter.receiveMotion(ev, layer);
+		if(ev.isProcessed()) return;
+		pause.receiveMotion(ev, layer);
 	}
 
 	@Override
@@ -104,6 +109,7 @@ public class GameStage extends GameObject {
 		camera.drawScreen(c, p, layer);
 		stick.drawScreen(c, p, layer);
 		counter.drawScreen(c, p, layer);
+		pause.drawScreen(c, p, layer);
 		
 		// controller
 		p.reset();
@@ -123,6 +129,7 @@ public class GameStage extends GameObject {
 		map.restoreData();
 		stick.restoreData();
 		counter.restoreData();
+		pause.restoreData();
 	}
 
 	@Override
