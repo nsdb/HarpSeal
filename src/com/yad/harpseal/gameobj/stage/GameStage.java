@@ -31,6 +31,7 @@ public class GameStage extends GameObject {
 	private int actionTime;
 	private final static int ACT_STARTING_FADEOUT=1;
 	private final static int ACT_PLAYING=2;
+	private final static int ACT_ENDING_FADEIN=3;
 	
 
 	public GameStage(Communicable con, int stageGroup, int stageNumber) {
@@ -66,9 +67,13 @@ public class GameStage extends GameObject {
 		
 		// controller
 		actionTime+=ms;
-		if(actionName==ACT_STARTING_FADEOUT && actionTime>=500) {
-			actionName=ACT_PLAYING;
-			actionTime=0;
+		switch(actionName) {
+		case ACT_STARTING_FADEOUT:
+			if(actionTime>=500) changeAction(ACT_PLAYING);
+			break;
+		case ACT_ENDING_FADEIN:
+			if(actionTime>=500) con.send("gameEnd");
+			break;
 		}
 	}
 
@@ -103,11 +108,15 @@ public class GameStage extends GameObject {
 		counter.drawScreen(c, p, layer);
 		
 		// controller
+		p.reset();
 		if(layer==Layer.LAYER_SCREEN && actionName==ACT_STARTING_FADEOUT) {
-			p.reset();
 			int alpha=Math.round( (float)(500-actionTime)/500*0xFF ) << 24;
 			p.setColor(alpha | 0xFFFFFF);
 			c.drawRect(c.getClipBounds(), p);
+		} else if(layer==Layer.LAYER_SCREEN && actionName==ACT_ENDING_FADEIN) {
+			int alpha=Math.round( (float)actionTime/500*0xFF ) << 24;
+			p.setColor(alpha | 0x000000);
+			c.drawRect(c.getClipBounds(), p);	
 		}
 	}
 
@@ -123,8 +132,8 @@ public class GameStage extends GameObject {
 		String[] msgs=msg.split("/");
 
 		if(msgs[0].equals("stickAction")) {
-			map.send("movePlayer/"+msgs[1]);
-			camera.send("playerMoved/"+(Integer)map.get("playerX")+"/"+(Integer)map.get("playerY"));
+			if(map.send("movePlayer/"+msgs[1])==1)
+				camera.send("playerMoved/"+(Integer)map.get("playerX")+"/"+(Integer)map.get("playerY"));
 			return 1;
 		}
 		else if(msgs[0].equals("playerStepped")) {
@@ -138,7 +147,7 @@ public class GameStage extends GameObject {
 			return 1;
 		}
 		else if(msgs[0].equals("playerReached")) {
-			// TODO game end processing
+			changeAction(ACT_ENDING_FADEIN);
 			return 1;
 		}
 		else if(msgs[0].equals("scroll")) {
@@ -160,7 +169,13 @@ public class GameStage extends GameObject {
 	}
 	
 	
+	//// private
 	
+	private void changeAction(int actNa) {
+		HarpLog.info("Stage action changed : "+actionName+" -> "+actNa);
+		actionName=actNa;
+		actionTime=0;
+	}
 	
 	
 	
