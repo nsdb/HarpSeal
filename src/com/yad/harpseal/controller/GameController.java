@@ -6,8 +6,8 @@ import android.graphics.Paint;
 import android.view.SurfaceHolder;
 
 import com.yad.harpseal.gameobj.GameObject;
-import com.yad.harpseal.gameobj.stage.GameStage;
-import com.yad.harpseal.gameobj.stage.MainStage;
+import com.yad.harpseal.gameobj.game.GameStage;
+import com.yad.harpseal.gameobj.main.MainStage;
 import com.yad.harpseal.util.HarpEvent;
 
 public class GameController extends GameControllerBase {

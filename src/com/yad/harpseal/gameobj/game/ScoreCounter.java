@@ -1,4 +1,4 @@
-package com.yad.harpseal.gameobj.window;
+package com.yad.harpseal.gameobj.game;
 
 import android.content.res.Resources;
 import android.graphics.Canvas;

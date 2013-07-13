@@ -1,4 +1,4 @@
-package com.yad.harpseal.gameobj.stage;
+package com.yad.harpseal.gameobj.game;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -15,13 +15,13 @@ import com.yad.harpseal.constant.Direction;
 import com.yad.harpseal.constant.Screen;
 import com.yad.harpseal.constant.TileType;
 import com.yad.harpseal.gameobj.GameObject;
-import com.yad.harpseal.gameobj.character.Fish;
-import com.yad.harpseal.gameobj.character.GoalFlag;
-import com.yad.harpseal.gameobj.character.PlayerSeal;
-import com.yad.harpseal.gameobj.field.TheArcticOcean;
-import com.yad.harpseal.gameobj.tile.BrakingTile;
-import com.yad.harpseal.gameobj.tile.NormalTile;
-import com.yad.harpseal.gameobj.tile.RotatableTile;
+import com.yad.harpseal.gameobj.game.map.BrakingTile;
+import com.yad.harpseal.gameobj.game.map.Fish;
+import com.yad.harpseal.gameobj.game.map.GoalFlag;
+import com.yad.harpseal.gameobj.game.map.NormalTile;
+import com.yad.harpseal.gameobj.game.map.PlayerSeal;
+import com.yad.harpseal.gameobj.game.map.RotatableTile;
+import com.yad.harpseal.gameobj.game.map.TheArcticOcean;
 import com.yad.harpseal.util.Communicable;
 import com.yad.harpseal.util.HarpEvent;
 import com.yad.harpseal.util.HarpLog;

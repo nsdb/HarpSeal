@@ -1,4 +1,4 @@
-package com.yad.harpseal.gameobj.character;
+package com.yad.harpseal.gameobj.game.map;
 
 import android.content.res.Resources;
 import android.graphics.Canvas;

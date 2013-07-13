@@ -1,4 +1,4 @@
-package com.yad.harpseal.gameobj.tile;
+package com.yad.harpseal.gameobj.game.map;
 
 import java.util.Random;
 

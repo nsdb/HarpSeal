@@ -1,4 +1,4 @@
-package com.yad.harpseal.gameobj.stage;
+package com.yad.harpseal.gameobj.game;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
