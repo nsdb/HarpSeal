@@ -20,17 +20,24 @@ public class GameStage extends GameObject {
 
 	// game objects
 	private GameMap map;
+	private TheArcticOcean field;
 	private GameCamera camera;
 	private Joystick stick;
 	private ScoreCounter counter;
-	private PauseBtn pause;
+	private PauseBtn pb;
+	private PauseWindow pw;
 	
 	// stage action
 	private int actionName;
 	private int actionTime;
+	private boolean playable;
 	private final static int ACT_STARTING_FADEOUT=1;
 	private final static int ACT_PLAYING=2;
-	private final static int ACT_ENDING_FADEIN=3;
+	private final static int ACT_PAUSED=3;
+	private final static int ACT_RESTARTING_FADEIN=4;
+	private final static int ACT_RESTARTING_FADEOUT=5;
+	private final static int ACT_ENDING_FADEIN=6;
+	private final static int FADE_TIME=300;
 	
 
 	public GameStage(Communicable con, int stageGroup, int stageNumber) {
@@ -45,15 +52,16 @@ public class GameStage extends GameObject {
 		
 		// game objects
 		map=new GameMap(this,stageGroup,stageNumber);
+		field=new TheArcticOcean(this, (Integer)map.get("width"), (Integer)map.get("height"));
 		camera=new GameCamera( this, (Integer)map.get("width"), (Integer)map.get("height"),
 				(Integer)map.get("playerX"), (Integer)map.get("playerY") );
 		stick=new Joystick(this);
 		counter=new ScoreCounter(this);
-		pause=new PauseBtn(this);
+		pb=new PauseBtn(this);
+		pw=new PauseWindow(this);
 		
 		// stage action
-		actionName=ACT_STARTING_FADEOUT;
-		actionTime=0;
+		changeAction(ACT_STARTING_FADEOUT);
 	}
 
 	@Override
@@ -61,19 +69,27 @@ public class GameStage extends GameObject {
 
 		// objects
 		map.playGame(ms);
+		field.playGame(ms);
 		camera.playGame(ms);
 		stick.playGame(ms);
 		counter.playGame(ms);
-		pause.playGame(ms);
+		pb.playGame(ms);
+		pw.playGame(ms);
 		
 		// controller
 		actionTime+=ms;
 		switch(actionName) {
 		case ACT_STARTING_FADEOUT:
-			if(actionTime>=500) changeAction(ACT_PLAYING);
+			if(actionTime>=FADE_TIME) changeAction(ACT_PLAYING);
 			break;
 		case ACT_ENDING_FADEIN:
-			if(actionTime>=500) con.send("gameEnd");
+			if(actionTime>=FADE_TIME) con.send("gameEnd");
+			break;
+		case ACT_RESTARTING_FADEIN:
+			if(actionTime>=FADE_TIME) restart();
+			break;
+		case ACT_RESTARTING_FADEOUT:
+			if(actionTime>=FADE_TIME) changeAction(ACT_PLAYING);
 			break;
 		}
 	}
@@ -86,15 +102,21 @@ public class GameStage extends GameObject {
 		else if(layer==Layer.LAYER_WINDOW) ev.setCamera(0, 0);
 		
 		// objects
-		map.receiveMotion(ev, layer);
-		if(ev.isProcessed()) return;
-		camera.receiveMotion(ev, layer);
-		if(ev.isProcessed()) return;
-		stick.receiveMotion(ev, layer);
-		if(ev.isProcessed()) return;
-		counter.receiveMotion(ev, layer);
-		if(ev.isProcessed()) return;
-		pause.receiveMotion(ev, layer);
+		if(playable) {
+			map.receiveMotion(ev, layer);
+			if(ev.isProcessed()) return;
+			field.receiveMotion(ev, layer);
+			if(ev.isProcessed()) return;
+			camera.receiveMotion(ev, layer);
+			if(ev.isProcessed()) return;
+			stick.receiveMotion(ev, layer);
+			if(ev.isProcessed()) return;
+			counter.receiveMotion(ev, layer);
+			if(ev.isProcessed()) return;
+			pb.receiveMotion(ev, layer);			
+			if(ev.isProcessed()) return;
+		}
+		pw.receiveMotion(ev, layer);
 	}
 
 	@Override
@@ -106,30 +128,44 @@ public class GameStage extends GameObject {
 		
 		// objects
 		map.drawScreen(c, p, layer);
+		field.drawScreen(c, p, layer);
 		camera.drawScreen(c, p, layer);
 		stick.drawScreen(c, p, layer);
 		counter.drawScreen(c, p, layer);
-		pause.drawScreen(c, p, layer);
+		pb.drawScreen(c, p, layer);
+		pw.drawScreen(c, p, layer);
 		
-		// controller
+		// screen effect
 		p.reset();
-		if(layer==Layer.LAYER_SCREEN && actionName==ACT_STARTING_FADEOUT) {
-			int alpha=Math.round( (float)(500-actionTime)/500*0xFF ) << 24;
+		int alpha;
+		if(layer != Layer.LAYER_SCREEN) return;
+		switch(actionName) {
+		case ACT_STARTING_FADEOUT: case ACT_RESTARTING_FADEOUT:
+			alpha=Math.round( (float)(FADE_TIME-actionTime)/FADE_TIME*0xFF ) << 24;
 			p.setColor(alpha | 0xFFFFFF);
 			c.drawRect(c.getClipBounds(), p);
-		} else if(layer==Layer.LAYER_SCREEN && actionName==ACT_ENDING_FADEIN) {
-			int alpha=Math.round( (float)actionTime/500*0xFF ) << 24;
+			break;
+		case ACT_ENDING_FADEIN:
+			alpha=Math.round( (float)actionTime/FADE_TIME*0xFF ) << 24;
 			p.setColor(alpha | 0x000000);
-			c.drawRect(c.getClipBounds(), p);	
+			c.drawRect(c.getClipBounds(), p);
+			break;
+		case ACT_RESTARTING_FADEIN:
+			alpha=Math.round( (float)actionTime/FADE_TIME*0xFF ) << 24;
+			p.setColor(alpha | 0xFFFFFF);
+			c.drawRect(c.getClipBounds(), p);
+			break;
 		}
 	}
 
 	@Override
 	public void restoreData() {
 		map.restoreData();
+		field.restoreData();
 		stick.restoreData();
 		counter.restoreData();
-		pause.restoreData();
+		pb.restoreData();
+		pw.restoreData();
 	}
 
 	@Override
@@ -158,6 +194,20 @@ public class GameStage extends GameObject {
 		else if(msgs[0].equals("scroll")) {
 			return camera.send(msg);
 		}
+		else if(msgs[0].equals("gamePause")) {
+			changeAction(ACT_PAUSED);
+			pw.send("show");
+			return 1;
+		}
+		else if(msgs[0].equals("gameResume")) {
+			changeAction(ACT_PLAYING);
+			pw.send("hide");
+			return 1;
+		}
+		else if(msgs[0].equals("gameRestart")) {
+			changeAction(ACT_RESTARTING_FADEIN);
+			return 1;
+		}
 		else return con.send(msg);
 	}
 
@@ -180,6 +230,29 @@ public class GameStage extends GameObject {
 		HarpLog.info("Stage action changed : "+actionName+" -> "+actNa);
 		actionName=actNa;
 		actionTime=0;
+		
+		// playable check
+		switch(actionName) {
+		case ACT_STARTING_FADEOUT: case ACT_PLAYING: case ACT_RESTARTING_FADEOUT:
+			playable=true;
+			break;
+		case ACT_PAUSED: case ACT_RESTARTING_FADEIN: case ACT_ENDING_FADEIN: 
+			playable=false;
+			stick.send("reset");
+			break;
+		default:
+			HarpLog.error("Invalid action name : "+actionName);
+			playable=true;
+			break;
+		}
+	}
+	
+	private void restart() {
+		map.send("reset");
+		pw.send("reset");
+		stepCount=0;
+		fishCount=0;
+		changeAction(ACT_RESTARTING_FADEOUT);		
 	}
 	
 	

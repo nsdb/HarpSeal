@@ -133,7 +133,16 @@ public class Joystick extends GameObject {
 
 	@Override
 	public int send(String msg) {
-		return 0;
+		String[] msgs=msg.split("/");
+
+		if(msgs[0].equals("reset")) {
+			stickX=0;
+			stickY=0;
+			activeDirection=Direction.NONE;
+			grabbed=false;
+			return 1;
+		}
+		else return 0;
 	}
 
 	@Override

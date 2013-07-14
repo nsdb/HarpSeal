@@ -21,7 +21,6 @@ import com.yad.harpseal.gameobj.game.map.GoalFlag;
 import com.yad.harpseal.gameobj.game.map.NormalTile;
 import com.yad.harpseal.gameobj.game.map.PlayerSeal;
 import com.yad.harpseal.gameobj.game.map.RotatableTile;
-import com.yad.harpseal.gameobj.game.map.TheArcticOcean;
 import com.yad.harpseal.util.Communicable;
 import com.yad.harpseal.util.HarpEvent;
 import com.yad.harpseal.util.HarpLog;
@@ -36,7 +35,6 @@ public class GameMap extends GameObject {
 	private String[] charString;
 	
 	// map objects
-	private TheArcticOcean field;
 	private ArrayList<GameObject> tiles;
 	private ArrayList<GameObject> characters;
 	private Queue<GameObject> sentenced;
@@ -47,6 +45,7 @@ public class GameMap extends GameObject {
 		tiles=new ArrayList<GameObject>();
 		characters=new ArrayList<GameObject>();
 		sentenced=new LinkedList<GameObject>();
+
 		readMap(stageGroup,stageNumber);
 		buildMap();
 	}
@@ -58,7 +57,6 @@ public class GameMap extends GameObject {
 			o.playGame(ms);
 		for(GameObject o : characters)
 			o.playGame(ms);
-		field.playGame(ms);
 
 		tiles.remove(sentenced.peek());
 		characters.remove(sentenced.poll());
@@ -74,7 +72,6 @@ public class GameMap extends GameObject {
 			o.receiveMotion(ev, layer);
 			if(ev.isProcessed()) return;
 		}
-		field.receiveMotion(ev, layer);
 	}
 
 	@Override
@@ -83,7 +80,6 @@ public class GameMap extends GameObject {
 			o.drawScreen(c, p, layer);
 		for(GameObject o : characters)
 			o.drawScreen(c, p, layer);
-		field.drawScreen(c, p, layer);
 	}
 
 	@Override
@@ -92,7 +88,6 @@ public class GameMap extends GameObject {
 			o.restoreData();
 		for(GameObject o : characters)
 			o.restoreData();
-		field.restoreData();
 	}
 
 	@Override
@@ -126,6 +121,11 @@ public class GameMap extends GameObject {
 		}
 		else if(msgs[0].equals("broken")) {
 			breakTileEnd( Integer.parseInt(msgs[1]), Integer.parseInt(msgs[2]) );
+			return 1;
+		}
+		else if(msgs[0].equals("reset")) {
+			clearMap();
+			buildMap();
 			return 1;
 		}
 		else return con.send(msg);
@@ -213,9 +213,6 @@ public class GameMap extends GameObject {
 	
 	private void buildMap() {
 
-		// field
-		field=new TheArcticOcean(this,mapWidth,mapHeight);
-		
 		// tiles, characters
 		for(int y=0;y<mapHeight;y++) {
 			for(int x=0;x<mapWidth;x++) {
@@ -254,11 +251,9 @@ public class GameMap extends GameObject {
 			o.restoreData();
 		for(GameObject o : characters)
 			o.restoreData();
-		field.restoreData();
 		tiles.clear();
 		characters.clear();
 		player=null;
-		field=null;
 	}
 	
 	//// private - tile, character action

@@ -33,7 +33,8 @@ public class PauseBtn extends GameObject {
 		if(layer != Layer.LAYER_WINDOW) return;
 		if(ev.getType() != HarpEvent.MOTION_CLICK) return;
 		if(Func.distan(btnX, btnY, ev.getX(), ev.getY()) > RANGE_ACTIVE) return;
-		con.send("paused");
+		con.send("gamePause");
+		ev.process();
 	}
 
 	@Override
