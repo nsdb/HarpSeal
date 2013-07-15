@@ -5,11 +5,12 @@ import com.yad.harpseal.util.HarpLog;
 
 import android.os.Bundle;
 import android.view.MotionEvent;
+import android.view.SurfaceView;
 import android.app.Activity;
 
 public class MainActivity extends Activity {
 	
-	GameView view;
+	SurfaceView view;
 	GameController thread;
 
 	// game start
@@ -20,7 +21,7 @@ public class MainActivity extends Activity {
 		HarpLog.info("MainActivity created");
 		
 		// init
-		view=new GameView(getApplicationContext());
+		view=new SurfaceView(getApplicationContext());
 		thread=new GameController(this,view.getHolder());
 		setContentView(view);
 		thread.start();
