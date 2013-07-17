@@ -99,7 +99,11 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 					
 					// check screen is available
 					c=holder.lockCanvas(null);
-					if(c!=null) {
+					if(c==null) {
+						HarpLog.info("Failed to lock canvas. Thread will give some time for holder");
+						Thread.sleep(1000);
+					}
+					else {
 						
 						// calculate scale, trans
 						scaleRate=(float)c.getWidth()/Screen.SCREEN_X;
