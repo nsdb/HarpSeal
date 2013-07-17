@@ -145,7 +145,7 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 					
 					// timer end
 					lms=System.currentTimeMillis();
-					if(fms+period<lms) Thread.sleep(lms-fms-period);
+					if(lms-fms<period) Thread.sleep(period-lms+fms);
 					
 					// time loss need to be processed
 					
