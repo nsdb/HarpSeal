@@ -3,6 +3,7 @@ package com.yad.harpseal.gameobj.stage;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
+import android.util.Log;
 
 import com.yad.harpseal.constant.Layer;
 import com.yad.harpseal.constant.Screen;
@@ -13,6 +14,7 @@ import com.yad.harpseal.util.HarpEvent;
 public class MainStage extends GameObject {
 	
 	private int time;
+	private int stageGroup = 0;
 
 	public MainStage(Communicable con) {
 		super(con);
@@ -21,36 +23,50 @@ public class MainStage extends GameObject {
 
 	@Override
 	public void playGame(int ms) {
-		time+=ms;
-		if(time>3000) {
-			con.send("gameStart/"+1+"/"+1);
-		}
+
 	}
 
 	@Override
 	public void receiveMotion(HarpEvent ev, int layer) {
+		//click
+		int pointX = (int)(ev.getX());
+		int pointY = (int)(ev.getY());
+		if(ev.getType() != HarpEvent.MOTION_CLICK) return;
+
+		if (stageGroup == 0) {
+			if ( (pointX >= 100 && pointX <= 200) && (pointY >= 400 && pointY <= 500 ) ) {
+				stageGroup = 1;
+				return;
+			}
+		}
+		else {
+			if ( ((pointX >= 100 && pointX <= 400) && (pointY >= 400 && pointY <= 500)) ) {
+				con.send("gameStart/"+stageGroup+"/"+1);
+			}
+		}
 	}
 
+	// 0.015초마다 자동 호출 
 	@Override
 	public void drawScreen(Canvas c, Paint p, int layer) {
 		if(layer != Layer.LAYER_SCREEN) return;
 		p.reset();
-		
-		p.setTextAlign(Align.CENTER);
-		p.setTextSize(30);
-		p.setColor(0xFFFFFFFF);
-		c.drawText("잠시 후 게임 화면으로 이동합니다", Screen.SCREEN_X/2, Screen.SCREEN_Y/2+15, p);
 
-		if(time<500) {
-			int alpha=Math.round( (float)(500-time)/500*0xFF ) << 24;
-			p.setColor( alpha | 0x000000 );
-			c.drawRect(0,0,Screen.SCREEN_X,Screen.SCREEN_Y,p);
+		if (stageGroup == 1) {
+			// level에서 클릭해서 들어간 경우
+			p.setColor(0xFFda70d6);
+			c.drawRect(Screen.SCREEN_X/3f, Screen.SCREEN_Y*4/9f, Screen.SCREEN_X*2/3f, Screen.SCREEN_Y*5/9f, p);
+			p.setColor(0xFFffffff);
+			c.drawText("START", Screen.SCREEN_X/2, Screen.SCREEN_Y/2, p);
 		}
-		if(time>2500) {
-			int alpha=Math.round( (float)(time-2500)/500*0xFF ) << 24;
-			p.setColor( alpha | 0xFFFFFF );
-			c.drawRect(0,0,Screen.SCREEN_X,Screen.SCREEN_Y,p);
+		else {
+			// 첫 화면일 경우 
+			p.setColor(0xFFffe4e1);
+			c.drawRect(Screen.SCREEN_X*1/6f, Screen.SCREEN_Y*5/9f, Screen.SCREEN_X*2/6f, Screen.SCREEN_Y*4/9f, p);
+			c.drawRect(Screen.SCREEN_X*25/60f, Screen.SCREEN_Y*5/9f, Screen.SCREEN_X*35/60f, Screen.SCREEN_Y*4/9f, p);
+			c.drawRect(Screen.SCREEN_X*4/6f, Screen.SCREEN_Y*5/9f, Screen.SCREEN_X*5/6f, Screen.SCREEN_Y*4/9f, p);
 		}
+		
 	}
 
 	@Override
