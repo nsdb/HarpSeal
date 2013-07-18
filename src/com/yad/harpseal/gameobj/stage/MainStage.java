@@ -3,6 +3,7 @@ package com.yad.harpseal.gameobj.stage;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
+import android.util.Log;
 
 import com.yad.harpseal.constant.Layer;
 import com.yad.harpseal.constant.Screen;
@@ -22,15 +23,10 @@ public class MainStage extends GameObject {
 
 	@Override
 	public void playGame(int ms) {
-		time+=ms;
-		if(time>3000) {
-			con.send("gameStart/"+1+"/"+1);
-		}
 	}
 
 	@Override
 	public void receiveMotion(HarpEvent ev, int layer) {
-
 		//click
 		int pointX = (int)(ev.getX());
 		int pointY = (int)(ev.getY());
