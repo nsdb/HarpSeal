@@ -186,7 +186,12 @@ public abstract class GameControllerBase extends Thread implements Controllable,
 	public final void pause() {
 		HarpLog.info("Game thread paused");
 		isPaused=true;
-		mediaPlayer.pause();
+		// sometimes occur but I don't know why.
+		try {
+			mediaPlayer.pause();
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public final void restart() {
