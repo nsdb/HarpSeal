@@ -35,6 +35,7 @@ public class MainStage extends GameObject {
 		if (stageGroup == 0) {
 			if ( (pointX >= 100 && pointX <= 200) && (pointY >= 400 && pointY <= 500 ) ) {
 				stageGroup = 1;
+				ev.process();
 				return;
 			}
 		}
