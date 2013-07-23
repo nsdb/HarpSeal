@@ -4,18 +4,18 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
-import android.graphics.drawable.Drawable;
 
 import com.yad.harpseal.R;
 import com.yad.harpseal.constant.Layer;
 import com.yad.harpseal.gameobj.GameObject;
 import com.yad.harpseal.util.Communicable;
+import com.yad.harpseal.util.HarpDraw;
 import com.yad.harpseal.util.HarpEvent;
 
 public class ScoreCounter extends GameObject {
 	
 	private int x,y;
-	private Drawable step,fish;
+	private HarpDraw step,fish;
 	private int stepCount,fishCount,fishMax;
 	
 	private final static int MARGIN_TOP=10;
@@ -31,8 +31,8 @@ public class ScoreCounter extends GameObject {
 		this.x=MARGIN_TOP;
 		this.y=MARGIN_LEFT;
 		Resources res=(Resources)con.get("resources");
-		step=res.getDrawable(R.drawable.sample_step);
-		fish=res.getDrawable(R.drawable.sample_fish);
+		step=new HarpDraw( res.getDrawable(R.drawable.sample_step) );
+		fish=new HarpDraw( res.getDrawable(R.drawable.sample_fish) );
 		this.stepCount=0;
 		this.fishCount=0;
 		this.fishMax=0;
@@ -55,12 +55,8 @@ public class ScoreCounter extends GameObject {
 		p.reset();
 		
 		// step image
-		int cX=x+IMAGE_SIZE/2;
-		int cY=y+IMAGE_SIZE/2;
-		int rX=IMAGE_SIZE/2;
-		int rY=step.getIntrinsicHeight()*IMAGE_SIZE/step.getIntrinsicWidth()/2;
-		step.setBounds(cX-rX,cY-rY,cX+rX,cY+rY);
-		step.draw(c);
+		step.setValue(HarpDraw.ALIGN_TOPLEFT, x, y, IMAGE_SIZE);
+		step.drawOn(c);
 		
 		// step text
 		p.setStyle(Paint.Style.FILL);
@@ -74,12 +70,8 @@ public class ScoreCounter extends GameObject {
 		c.drawText(String.valueOf(stepCount), x+IMAGE_SIZE+MARGIN_IN+TEXT_LENGTH, y+IMAGE_SIZE/2+TEXT_SIZE/3, p);
 		
 		// fish image
-		cX=x+IMAGE_SIZE/2+MARGIN_IN+TEXT_LENGTH+MARGIN_IN2+IMAGE_SIZE;
-		cY=y+IMAGE_SIZE/2;
-		rX=IMAGE_SIZE/2;
-		rY=fish.getIntrinsicHeight()*IMAGE_SIZE/fish.getIntrinsicWidth()/2;
-		fish.setBounds(cX-rX,cY-rY,cX+rX,cY+rY);
-		fish.draw(c);
+		fish.setValue(HarpDraw.ALIGN_TOPLEFT, x+IMAGE_SIZE+MARGIN_IN+TEXT_LENGTH+MARGIN_IN2, y, IMAGE_SIZE);
+		fish.drawOn(c);
 		
 		// fish text
 		p.setStyle(Paint.Style.FILL);

@@ -3,27 +3,27 @@ package com.yad.harpseal.gameobj.game.map;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 
 import com.yad.harpseal.R;
 import com.yad.harpseal.constant.Layer;
 import com.yad.harpseal.constant.Screen;
 import com.yad.harpseal.gameobj.GameObject;
 import com.yad.harpseal.util.Communicable;
+import com.yad.harpseal.util.HarpDraw;
 import com.yad.harpseal.util.HarpEvent;
 import com.yad.harpseal.util.HarpLog;
 
 public class Fish extends GameObject {
 
 	private int mapX,mapY;
-	private Drawable image;
+	private HarpDraw image;
 
 	public Fish(Communicable con,int mapX,int mapY) {
 		super(con);
 		this.mapX=mapX;
 		this.mapY=mapY;
 		Resources res=(Resources)con.get("resources");
-		image=res.getDrawable(R.drawable.sample_fish);
+		image=new HarpDraw(res.getDrawable(R.drawable.sample_fish));
 	}
 
 	@Override
@@ -42,12 +42,8 @@ public class Fish extends GameObject {
 		int tLen=Screen.TILE_LENGTH;
 		int cX=Screen.FIELD_MARGIN_LEFT+mapX*tLen+tLen/2;
 		int cY=Screen.FIELD_MARGIN_TOP+mapY*tLen+tLen/2;
-		int rX=tLen/3;
-		int rY=image.getIntrinsicHeight()*tLen/image.getIntrinsicWidth()/3;
-		
-		image.setBounds(cX-rX,cY-rY,cX+rX,cY+rY);
-		image.draw(c);
-		
+		image.setValue(HarpDraw.ALIGN_MIDCEN, cX, cY, tLen*0.6f);
+		image.drawOn(c);		
 	}
 
 	@Override

@@ -26,6 +26,7 @@ public class GameStage extends GameObject {
 	private ScoreCounter counter;
 	private PauseBtn pb;
 	private PauseWindow pw;
+	private SuccessWindow sw;
 	
 	// stage action
 	private int actionName;
@@ -36,7 +37,8 @@ public class GameStage extends GameObject {
 	private final static int ACT_PAUSED=3;
 	private final static int ACT_RESTARTING_FADEIN=4;
 	private final static int ACT_RESTARTING_FADEOUT=5;
-	private final static int ACT_ENDING_FADEIN=6;
+	private final static int ACT_SUCCESS=6;
+	private final static int ACT_ENDING_FADEIN=7;
 	private final static int FADE_TIME=300;
 	
 
@@ -59,6 +61,7 @@ public class GameStage extends GameObject {
 		counter=new ScoreCounter(this);
 		pb=new PauseBtn(this);
 		pw=new PauseWindow(this);
+		sw=new SuccessWindow(this);
 		
 		// stage action
 		changeAction(ACT_STARTING_FADEOUT);
@@ -75,6 +78,7 @@ public class GameStage extends GameObject {
 		counter.playGame(ms);
 		pb.playGame(ms);
 		pw.playGame(ms);
+		sw.playGame(ms);
 		
 		// controller
 		actionTime+=ms;
@@ -117,6 +121,8 @@ public class GameStage extends GameObject {
 			if(ev.isProcessed()) return;
 		}
 		pw.receiveMotion(ev, layer);
+		if(ev.isProcessed()) return;
+		sw.receiveMotion(ev, layer);
 	}
 
 	@Override
@@ -134,6 +140,7 @@ public class GameStage extends GameObject {
 		counter.drawScreen(c, p, layer);
 		pb.drawScreen(c, p, layer);
 		pw.drawScreen(c, p, layer);
+		sw.drawScreen(c, p, layer);
 		
 		// screen effect
 		p.reset();
@@ -166,6 +173,7 @@ public class GameStage extends GameObject {
 		counter.restoreData();
 		pb.restoreData();
 		pw.restoreData();
+		sw.restoreData();
 	}
 
 	@Override
@@ -188,7 +196,8 @@ public class GameStage extends GameObject {
 			return 1;
 		}
 		else if(msgs[0].equals("playerReached")) {
-			changeAction(ACT_ENDING_FADEIN);
+			changeAction(ACT_SUCCESS);
+			sw.send("show");
 			return 1;
 		}
 		else if(msgs[0].equals("scroll")) {
@@ -236,7 +245,7 @@ public class GameStage extends GameObject {
 		case ACT_STARTING_FADEOUT: case ACT_PLAYING: case ACT_RESTARTING_FADEOUT:
 			playable=true;
 			break;
-		case ACT_PAUSED: case ACT_RESTARTING_FADEIN: case ACT_ENDING_FADEIN: 
+		case ACT_PAUSED: case ACT_RESTARTING_FADEIN: case ACT_ENDING_FADEIN: case ACT_SUCCESS:
 			playable=false;
 			stick.send("reset");
 			break;
