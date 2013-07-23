@@ -178,6 +178,7 @@ public class GameMap extends GameObject {
 			}
 			if(!str.equals("#"+stageNumber)) {
 				HarpLog.error("Failed to find map string matching stage number : "+stageGroup+", "+stageNumber);
+				readTempMap();
 				return;
 			}
 			
@@ -189,6 +190,7 @@ public class GameMap extends GameObject {
 				str=br.readLine();
 				if(str.length() != mapWidth) {
 					HarpLog.error("File struct error - tileString : "+stageGroup+", "+stageNumber);
+					readTempMap();
 					return;
 				}
 				tileString[i]=str;
@@ -198,6 +200,7 @@ public class GameMap extends GameObject {
 				str=br.readLine();
 				if(str.length() != mapWidth) {
 					HarpLog.error("File struct error - charString : "+stageGroup+", "+stageNumber);
+					readTempMap();
 					return;
 				}
 				charString[i]=str;				
@@ -254,6 +257,25 @@ public class GameMap extends GameObject {
 		tiles.clear();
 		characters.clear();
 		player=null;
+	}
+	
+	private void readTempMap() {
+		mapWidth=5;
+		mapHeight=6;
+		tileString=new String[mapHeight];
+		tileString[0]="00000";
+		tileString[1]="60006";
+		tileString[2]="00000";
+		tileString[3]="00100";
+		tileString[4]="00000";
+		tileString[5]="60006";
+		charString=new String[mapHeight];
+		charString[0]="00000";
+		charString[1]="30003";
+		charString[2]="00000";
+		charString[3]="00100";
+		charString[4]="00000";
+		charString[5]="20003";
 	}
 	
 	//// private - tile, character action
