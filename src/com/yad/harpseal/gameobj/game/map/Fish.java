@@ -42,7 +42,7 @@ public class Fish extends GameObject {
 		int tLen=Screen.TILE_LENGTH;
 		int cX=Screen.FIELD_MARGIN_LEFT+mapX*tLen+tLen/2;
 		int cY=Screen.FIELD_MARGIN_TOP+mapY*tLen+tLen/2;
-		image.setValue(HarpDraw.ALIGN_MIDCEN, cX, cY, tLen*0.6f);
+		image.setBase(HarpDraw.ALIGN_MIDCEN, cX, cY, tLen*0.6f);
 		image.drawOn(c);		
 	}
 

@@ -41,7 +41,7 @@ public class MainStage extends GameObject {
 		}
 		else {
 			if ( ((pointX >= 100 && pointX <= 400) && (pointY >= 400 && pointY <= 500)) ) {
-				con.send("gameStart/"+stageGroup+"/"+1);
+				con.send("gameStart/"+stageGroup+"/"+3);
 			}
 		}
 	}

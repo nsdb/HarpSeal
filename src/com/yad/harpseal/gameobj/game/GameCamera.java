@@ -96,6 +96,10 @@ public class GameCamera extends GameObject {
 			regulateCamera();
 			return 1;
 		}
+		else if(msgs[0].equals("focus")) {
+			setCameraPoint(Integer.parseInt(msgs[1]),Integer.parseInt(msgs[2]),true);
+			return 1;
+		}
 		else return 0;
 	}
 

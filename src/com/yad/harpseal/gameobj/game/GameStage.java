@@ -87,7 +87,7 @@ public class GameStage extends GameObject {
 			if(actionTime>=FADE_TIME) changeAction(ACT_PLAYING);
 			break;
 		case ACT_ENDING_FADEIN:
-			if(actionTime>=FADE_TIME) con.send("gameEnd");
+			if(actionTime>=FADE_TIME) con.send("gameEnded");
 			break;
 		case ACT_RESTARTING_FADEIN:
 			if(actionTime>=FADE_TIME) restart();
@@ -217,6 +217,10 @@ public class GameStage extends GameObject {
 			changeAction(ACT_RESTARTING_FADEIN);
 			return 1;
 		}
+		else if(msgs[0].equals("gameEnd")) {
+			changeAction(ACT_ENDING_FADEIN);
+			return 1;
+		}
 		else return con.send(msg);
 	}
 
@@ -259,9 +263,11 @@ public class GameStage extends GameObject {
 	private void restart() {
 		map.send("reset");
 		pw.send("reset");
+		sw.send("reset");
+		camera.send("focus/"+(Integer)map.get("playerX")+"/"+(Integer)map.get("playerY"));
 		stepCount=0;
 		fishCount=0;
-		changeAction(ACT_RESTARTING_FADEOUT);		
+		changeAction(ACT_RESTARTING_FADEOUT);	
 	}
 	
 	

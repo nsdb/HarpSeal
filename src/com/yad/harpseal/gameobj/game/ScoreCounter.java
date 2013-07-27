@@ -55,7 +55,7 @@ public class ScoreCounter extends GameObject {
 		p.reset();
 		
 		// step image
-		step.setValue(HarpDraw.ALIGN_TOPLEFT, x, y, IMAGE_SIZE);
+		step.setBase(HarpDraw.ALIGN_TOPLEFT, x, y, IMAGE_SIZE);
 		step.drawOn(c);
 		
 		// step text
@@ -70,7 +70,7 @@ public class ScoreCounter extends GameObject {
 		c.drawText(String.valueOf(stepCount), x+IMAGE_SIZE+MARGIN_IN+TEXT_LENGTH, y+IMAGE_SIZE/2+TEXT_SIZE/3, p);
 		
 		// fish image
-		fish.setValue(HarpDraw.ALIGN_TOPLEFT, x+IMAGE_SIZE+MARGIN_IN+TEXT_LENGTH+MARGIN_IN2, y, IMAGE_SIZE);
+		fish.setBase(HarpDraw.ALIGN_TOPLEFT, x+IMAGE_SIZE+MARGIN_IN+TEXT_LENGTH+MARGIN_IN2, y, IMAGE_SIZE);
 		fish.drawOn(c);
 		
 		// fish text

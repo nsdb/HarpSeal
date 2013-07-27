@@ -27,7 +27,7 @@ public class HarpDraw {
 		d.getBounds();
 	}
 	
-	public void setValue(int align,float x,float y,float size) {
+	public void setBase(int align,float x,float y,float size) {
 		float width=drawable.getIntrinsicWidth();
 		float height=drawable.getIntrinsicHeight();
 		
@@ -58,6 +58,10 @@ public class HarpDraw {
 		
 		// actual set
 		confirm();
+	}
+	
+	public void setAlpha(int alpha) {
+		drawable.setAlpha(alpha);
 	}
 	
 	public void drawOn(Canvas c) {

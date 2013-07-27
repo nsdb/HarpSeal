@@ -44,26 +44,24 @@ public class PauseWindow extends GameObject {
 		if(!show) return;
 		if(layer != Layer.LAYER_WINDOW) return;
 		if(restarting) return;
-		
-		if(ev.getType()==HarpEvent.MOTION_CLICK) {
+		if(ev.getType() != HarpEvent.MOTION_CLICK) return;
 			
-			float x=cx-BTN_RX_INTERVAL;
-			float y=cy+BTN_RY;
-			if(Func.distan(x, y, ev.getX(), ev.getY())<=BTN_RADIUS) {
-				con.send("gameRestart");
-				restarting=true;
-				ev.process();
-			}
-			x+=BTN_RX_INTERVAL;
-			if(Func.distan(x, y, ev.getX(), ev.getY())<=BTN_RADIUS) {
-				con.send("gameResume");
-				ev.process();
-			}
-			x+=BTN_RX_INTERVAL;
-			if(Func.distan(x, y, ev.getX(), ev.getY())<=BTN_RADIUS) {
-				// TODO option
-				ev.process();
-			}
+		float x=cx-BTN_RX_INTERVAL;
+		float y=cy+BTN_RY;
+		if(Func.distan(x, y, ev.getX(), ev.getY())<=BTN_RADIUS) {
+			con.send("gameRestart");
+			restarting=true;
+			ev.process();
+		}
+		x+=BTN_RX_INTERVAL;
+		if(Func.distan(x, y, ev.getX(), ev.getY())<=BTN_RADIUS) {
+			con.send("gameResume");
+			ev.process();
+		}
+		x+=BTN_RX_INTERVAL;
+		if(Func.distan(x, y, ev.getX(), ev.getY())<=BTN_RADIUS) {
+			// TODO option
+			ev.process();
 		}
 	}
 
