@@ -38,7 +38,9 @@ public class GameStage extends GameObject {
 	private final static int ACT_RESTARTING_FADEIN=4;
 	private final static int ACT_RESTARTING_FADEOUT=5;
 	private final static int ACT_SUCCESS=6;
-	private final static int ACT_ENDING_FADEIN=7;
+	private final static int ACT_NEXT_FADEIN=7;
+	private final static int ACT_NEXT_FADEOUT=8;
+	private final static int ACT_ENDING_FADEIN=9;
 	private final static int FADE_TIME=300;
 	
 
@@ -92,7 +94,10 @@ public class GameStage extends GameObject {
 		case ACT_RESTARTING_FADEIN:
 			if(actionTime>=FADE_TIME) restart();
 			break;
-		case ACT_RESTARTING_FADEOUT:
+		case ACT_NEXT_FADEIN:
+			if(actionTime>=FADE_TIME) toNext();
+			break;
+		case ACT_RESTARTING_FADEOUT: case ACT_NEXT_FADEOUT:
 			if(actionTime>=FADE_TIME) changeAction(ACT_PLAYING);
 			break;
 		}
@@ -147,7 +152,7 @@ public class GameStage extends GameObject {
 		int alpha;
 		if(layer != Layer.LAYER_SCREEN) return;
 		switch(actionName) {
-		case ACT_STARTING_FADEOUT: case ACT_RESTARTING_FADEOUT:
+		case ACT_STARTING_FADEOUT: case ACT_RESTARTING_FADEOUT: case ACT_NEXT_FADEOUT:
 			alpha=Math.round( (float)(FADE_TIME-actionTime)/FADE_TIME*0xFF ) << 24;
 			p.setColor(alpha | 0xFFFFFF);
 			c.drawRect(c.getClipBounds(), p);
@@ -157,7 +162,7 @@ public class GameStage extends GameObject {
 			p.setColor(alpha | 0x000000);
 			c.drawRect(c.getClipBounds(), p);
 			break;
-		case ACT_RESTARTING_FADEIN:
+		case ACT_RESTARTING_FADEIN: case ACT_NEXT_FADEIN:
 			alpha=Math.round( (float)actionTime/FADE_TIME*0xFF ) << 24;
 			p.setColor(alpha | 0xFFFFFF);
 			c.drawRect(c.getClipBounds(), p);
@@ -217,6 +222,10 @@ public class GameStage extends GameObject {
 			changeAction(ACT_RESTARTING_FADEIN);
 			return 1;
 		}
+		else if(msgs[0].equals("gameToNext")) {
+			changeAction(ACT_NEXT_FADEIN);
+			return 1;
+		}
 		else if(msgs[0].equals("gameEnd")) {
 			changeAction(ACT_ENDING_FADEIN);
 			return 1;
@@ -246,10 +255,10 @@ public class GameStage extends GameObject {
 		
 		// playable check
 		switch(actionName) {
-		case ACT_STARTING_FADEOUT: case ACT_PLAYING: case ACT_RESTARTING_FADEOUT:
+		case ACT_STARTING_FADEOUT: case ACT_PLAYING: case ACT_RESTARTING_FADEOUT: case ACT_NEXT_FADEOUT:
 			playable=true;
 			break;
-		case ACT_PAUSED: case ACT_RESTARTING_FADEIN: case ACT_ENDING_FADEIN: case ACT_SUCCESS:
+		case ACT_PAUSED: case ACT_RESTARTING_FADEIN: case ACT_ENDING_FADEIN: case ACT_SUCCESS: case ACT_NEXT_FADEIN:
 			playable=false;
 			stick.send("reset");
 			break;
@@ -268,6 +277,21 @@ public class GameStage extends GameObject {
 		stepCount=0;
 		fishCount=0;
 		changeAction(ACT_RESTARTING_FADEOUT);	
+	}
+	
+	private void toNext() {
+		HarpLog.info("Next stage Loading...");
+		stageNumber+=1;
+		map.send("changeToNext");
+		field.send("update/"+(Integer)map.get("width")+"/"+(Integer)map.get("height"));
+		camera.send("update/"+(Integer)map.get("width")+"/"+(Integer)map.get("height"));
+
+		pw.send("reset");
+		sw.send("reset");
+		camera.send("focus/"+(Integer)map.get("playerX")+"/"+(Integer)map.get("playerY"));
+		stepCount=0;
+		fishCount=0;
+		changeAction(ACT_NEXT_FADEOUT);		
 	}
 	
 	

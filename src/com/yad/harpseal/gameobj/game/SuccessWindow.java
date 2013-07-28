@@ -86,7 +86,8 @@ public class SuccessWindow extends GameObject {
 			ev.process();			
 		}
 		else if(nextRect.contains(ev.getX(), ev.getY())) {
-			// TODO next stage
+			con.send("gameToNext");
+			restarting=true;
 			ev.process();
 		}
 		else if(mainRect.contains(ev.getX(), ev.getY())) {

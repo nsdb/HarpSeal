@@ -46,7 +46,9 @@ public class GameMap extends GameObject {
 		characters=new ArrayList<GameObject>();
 		sentenced=new LinkedList<GameObject>();
 
-		readMap(stageGroup,stageNumber);
+		this.stageGroup=stageGroup;
+		this.stageNumber=stageNumber;
+		readMap();
 		buildMap();
 	}
 	
@@ -128,6 +130,13 @@ public class GameMap extends GameObject {
 			buildMap();
 			return 1;
 		}
+		else if(msgs[0].equals("changeToNext")) {
+			stageNumber+=1;
+			clearMap();
+			readMap();
+			buildMap();
+			return 1;
+		}
 		else return con.send(msg);
 		
 	}
@@ -154,10 +163,7 @@ public class GameMap extends GameObject {
 	
 	//// private - map setting
 	
-	private void readMap(int stageGroup, int stageNumber) {
-		if(this.stageGroup==stageGroup && this.stageNumber==stageNumber) return;
-		this.stageGroup=stageGroup;
-		this.stageNumber=stageNumber;
+	private void readMap() {
 		tileString=null;
 		charString=null;
 		

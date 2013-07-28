@@ -100,6 +100,11 @@ public class GameCamera extends GameObject {
 			setCameraPoint(Integer.parseInt(msgs[1]),Integer.parseInt(msgs[2]),true);
 			return 1;
 		}
+		else if(msgs[0].equals("update")) {
+			cameraWidth=Integer.parseInt(msgs[1]);
+			cameraHeight=Integer.parseInt(msgs[2]);
+			return 1;
+		}
 		else return 0;
 	}
 

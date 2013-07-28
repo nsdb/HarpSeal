@@ -75,7 +75,14 @@ public class TheArcticOcean extends GameObject {
 
 	@Override
 	public int send(String msg) {
-		return 0;
+		String[] msgs=msg.split("/");
+		
+		if(msgs[0].equals("update")) {
+			width=Integer.parseInt(msgs[1]);
+			height=Integer.parseInt(msgs[2]);
+			return 1;
+		}
+		else return 0;
 	}
 
 	@Override
