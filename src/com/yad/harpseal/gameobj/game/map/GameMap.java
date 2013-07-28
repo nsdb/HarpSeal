@@ -1,4 +1,4 @@
-package com.yad.harpseal.gameobj.game;
+package com.yad.harpseal.gameobj.game.map;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -15,12 +15,6 @@ import com.yad.harpseal.constant.Direction;
 import com.yad.harpseal.constant.Screen;
 import com.yad.harpseal.constant.TileType;
 import com.yad.harpseal.gameobj.GameObject;
-import com.yad.harpseal.gameobj.game.map.BrakingTile;
-import com.yad.harpseal.gameobj.game.map.Fish;
-import com.yad.harpseal.gameobj.game.map.GoalFlag;
-import com.yad.harpseal.gameobj.game.map.NormalTile;
-import com.yad.harpseal.gameobj.game.map.PlayerSeal;
-import com.yad.harpseal.gameobj.game.map.RotatableTile;
 import com.yad.harpseal.util.Communicable;
 import com.yad.harpseal.util.HarpEvent;
 import com.yad.harpseal.util.HarpLog;
