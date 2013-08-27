@@ -1,61 +1,22 @@
 package com.yad.harpseal;
 
-import com.yad.harpseal.controller.GameController;
-import com.yad.harpseal.util.HarpLog;
+import com.nsdb.engine.GameActivity;
+import com.yad.harpseal.constant.Screen;
 
 import android.os.Bundle;
-import android.view.MotionEvent;
-import android.view.SurfaceView;
-import android.app.Activity;
 
-public class MainActivity extends Activity {
+/**
+ * 맨 처음 실행되는 액티비티입니다. 화면을 유지하고, 게임의 실행을 돕습니다.
+ */
+public class MainActivity extends GameActivity {
 	
-	SurfaceView view;
-	GameController thread;
-
-	// game start
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		HarpLog.init("");
-		HarpLog.info("MainActivity created");
-		
-		// init
-		view=new SurfaceView(getApplicationContext());
-		thread=new GameController(this,view.getHolder());
-		setContentView(view);
-		thread.start();
-		
-	}
-	
-	// game restart
-	@Override
-	public void onResume() {
-		super.onResume();
-		HarpLog.info("MainActivity resumed");
-		thread.restart();
-	}
-	
-	@Override
-	public void onPause() {
-		super.onPause();
-		
-		// game pause
-		HarpLog.info("MainActivity paused");				
-		thread.pause();
-		
-		// game end
-		if(this.isFinishing()) {
-			HarpLog.info("MainActivity destroyed");
-			thread.end();
-		}
-	}
-	
-	// touch event
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		thread.pushEvent(event);
-		return true;
+		setGameScreenValue(Screen.WIDTH,Screen.HEIGHT,Screen.HORIZONTAL);
+		setRoot( new RootObject(getController()) );
+		setStatusBarVisible(true);
+		startGame();
 	}
 	
 }

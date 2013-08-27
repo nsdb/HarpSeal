@@ -11,9 +11,22 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int ic_launcher=0x7f020000;
-        public static final int sample_fish=0x7f020001;
-        public static final int sample_step=0x7f020002;
+        public static final int background=0x7f020000;
+        public static final int block=0x7f020001;
+        public static final int button_option=0x7f020002;
+        public static final int button_start=0x7f020003;
+        public static final int crack=0x7f020004;
+        public static final int cross=0x7f020005;
+        public static final int crown_fish=0x7f020006;
+        public static final int curve=0x7f020007;
+        public static final int ic_launcher=0x7f020008;
+        public static final int main=0x7f020009;
+        public static final int sample_fish=0x7f02000a;
+        public static final int sample_step=0x7f02000b;
+        public static final int seal01=0x7f02000c;
+        public static final int seal02=0x7f02000d;
+        public static final int vertical=0x7f02000e;
+        public static final int way3=0x7f02000f;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -23,6 +36,7 @@ public final class R {
         public static final int button_ok=0x7f040001;
         public static final int sample_bgm=0x7f040002;
         public static final int sample_chunk=0x7f040003;
+        public static final int sample_opening=0x7f040004;
     }
     public static final class string {
         public static final int app_name=0x7f050000;

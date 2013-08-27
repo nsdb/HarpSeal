@@ -1,5 +1,8 @@
 package com.yad.harpseal.constant;
 
+/**
+ * 방향 상수와 사용을 편리하게 하기 위한 메서드들이 들어있는 클래스입니다.
+ */
 public class Direction {
 
 	public final static int NONE=0;
